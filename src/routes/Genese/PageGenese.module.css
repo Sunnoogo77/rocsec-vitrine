@@ -1,0 +1,393 @@
+/* ══════════════════════════════════════════════════════════════════════
+   GENÈSE — Page récit générique (utilisée par les 9 sous-pages)
+   Liquid Glass redesign : article éditorial posé en carte glass sur
+   le canvas bluish ; voix Cormorant conservée intégralement.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── HERO ──────────────────────────────────────────────────────────── */
+/* Pattern Cultes : hero étendu sous le header (margin-top négatif +
+   padding-top généreux). Garde le subnav sticky superposé à un fond
+   sombre généreux dans le scroll initial. */
+.hero {
+  position: relative;
+  margin-top: -120px;
+  padding: 180px var(--pad-x) 80px;
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  color: var(--paper);
+}
+
+.heroInner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.heroTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin: 0;
+}
+.heroTitre em {
+  font-style: italic;
+  color: rgba(255, 255, 255, .76);
+}
+
+.heroSubtitre {
+  font-family: var(--f-serif);
+  font-size: clamp(16px, 3vw, 20px);
+  font-style: italic;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .78);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.heroMeta {
+  font-family: var(--f-text);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .55);
+  margin: 0;
+}
+
+/* ── ARTICLE — carte glass éditoriale posée sur le canvas ──────────── */
+.article {
+  background: transparent;
+  padding: 80px var(--pad-x);
+}
+
+.articleInner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  padding: 56px clamp(28px, 5vw, 64px);
+}
+
+/* ── PARAGRAPHE CORPS ──────────────────────────────────────────────── */
+.corps {
+  font-family: var(--f-serif);
+  font-size: 19px;
+  line-height: 1.72;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.dropCap::first-letter {
+  font-family: var(--f-serif);
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 0.82;
+  float: left;
+  margin: 6px 10px 0 0;
+  color: var(--ink-1);
+}
+
+/* ── INTERTITRES ───────────────────────────────────────────────────── */
+.h2 {
+  font-family: var(--f-serif);
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink-1);
+  margin: 32px 0 4px;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-1);
+}
+
+.h3 {
+  font-family: var(--f-serif);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 20px 0 0;
+}
+
+/* ── CITATIONS ─────────────────────────────────────────────────────── */
+.quote {
+  margin: 0;
+  padding: 0 0 0 24px;
+  border-left: 2px solid var(--ink-1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.quote p {
+  font-family: var(--f-serif);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ink-1);
+  margin: 0;
+}
+.quoteSource {
+  font-family: var(--f-text) !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--ink-3) !important;
+  font-style: normal !important;
+}
+
+/* Citation pull = Branham (filet rouge, encadré crème glassé) */
+.pull {
+  margin: 16px 0;
+  padding: 24px 28px;
+  background: rgba(252, 248, 245, 0.78);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-left: 3px solid var(--rst-red);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pull p {
+  font-family: var(--f-serif);
+  font-size: clamp(1.125rem, 2vw, 1.4rem);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ink-1);
+  margin: 0;
+}
+.pullSource {
+  font-family: var(--f-text) !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--ink-3) !important;
+  font-style: normal !important;
+  margin: 0;
+}
+
+/* ── RÉFÉRENCE BIBLIQUE ────────────────────────────────────────────── */
+.bibleRef {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.bibleRefRef {
+  font-family: var(--f-text);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rst-blue);
+  margin: 0;
+}
+
+.bibleRefText {
+  font-family: var(--f-serif);
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--ink-1);
+  margin: 0;
+  border-left: 2px solid var(--ink-1);
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bibleRefLine {
+  display: block;
+}
+
+/* ── IMAGE / FIGURE ────────────────────────────────────────────────── */
+.figure {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.figureImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 8px 22px rgba(11, 15, 25, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.figureCaption {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* ── LISTE TÉMOIGNAGES (Actes du Saint-Esprit) ─────────────────────── */
+.temoignagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 8px 0;
+  padding: 0;
+  border-top: 1.5px solid var(--ink-1);
+  border-bottom: 1.5px solid var(--ink-1);
+}
+
+.temoignageItem {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  padding: 16px 4px;
+  border-bottom: 1px solid var(--line-1);
+}
+.temoignageItem:last-child {
+  border-bottom: none;
+}
+
+.temoignageAuteur {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.temoignageRecit {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* ── SIGNATURE ─────────────────────────────────────────────────────── */
+.signature {
+  font-family: var(--f-serif);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--ink-2);
+  margin: 16px 0 0;
+  text-align: right;
+}
+
+/* ── SORTIE ────────────────────────────────────────────────────────── */
+.sortie {
+  background: transparent;
+  padding: 48px var(--pad-x) 80px;
+}
+
+.sortieInner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.sortieLink {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rst-blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(30, 71, 161, 0.4);
+  padding-bottom: 3px;
+  transition: color var(--t-fast), border-color var(--t-fast);
+  display: inline-flex;
+  align-items: center;
+  /* Touch target ≥ 44px (norme iOS HIG) sans casser la baseline visuelle */
+  min-height: var(--touch-min);
+}
+.sortieLink:hover {
+  color: var(--rst-blue-deep);
+  border-color: var(--rst-blue);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 820px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 820px) {
+  .hero {
+    margin-top: -110px;
+    padding: 142px var(--pad-x-mob) 56px;
+  }
+
+  .heroTitre {
+    font-size: clamp(2.25rem, 8vw, 3rem);
+  }
+
+  .article {
+    padding: 56px var(--pad-x-mob);
+  }
+
+  .articleInner {
+    gap: 22px;
+    padding: 32px 24px;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .temoignageItem {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .sortie {
+    padding: 40px var(--pad-x-mob) 64px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 480px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .corps {
+    font-size: 17px;
+  }
+  .dropCap::first-letter {
+    font-size: 52px;
+  }
+  .quote p {
+    font-size: 18px;
+  }
+}
+
+/* iPhone SE / téléphones très étroits — drop-cap réduit encore */
+@media (max-width: 360px) {
+  .dropCap::first-letter {
+    font-size: 44px;
+  }
+}

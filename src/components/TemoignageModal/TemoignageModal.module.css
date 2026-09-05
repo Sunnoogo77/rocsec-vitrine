@@ -1,0 +1,470 @@
+/* ============================================================
+   TemoignageModal — Form Sheet iOS-flavored
+   Réutilise les tokens Liquid Glass (--glass-*, --r-*, --shadow-*,
+   --bg-tint, --ink-*) et la typo RST (Cormorant Garamond pour le
+   titre, SF Pro Text fallback Inter pour la saisie).
+   Bottom-sheet en mobile, modal centré en desktop.
+   ============================================================ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(11, 15, 25, 0.42);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  animation: backdropIn 220ms var(--ease-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Desktop : sheet centré, radii généreux partout, ombre profonde. */
+.panel {
+  width: 100%;
+  max-width: 600px;
+  max-height: min(86dvh, 880px);
+  background: var(--bg-elevated);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 24px;
+  animation: panelIn 420ms var(--ease-spring);
+}
+
+@keyframes panelIn {
+  from { transform: translateY(20px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+/* Mobile : bottom-sheet collé en bas, radius haut seulement. */
+@media (max-width: 700px) {
+  .backdrop {
+    align-items: flex-end;
+  }
+  .panel {
+    margin: 0;
+    max-height: 92dvh;
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+    padding-bottom: var(--safe-bottom);
+    animation: panelInMobile 360ms var(--ease-spring);
+  }
+  @keyframes panelInMobile {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+}
+
+/* Handle pill iOS — visuel "sheet draggable". Affiché en mobile seulement. */
+.handle {
+  display: none;
+  width: 36px;
+  height: 4px;
+  background: rgba(11, 15, 25, 0.18);
+  border-radius: var(--r-pill);
+  margin: 8px auto 0;
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  .handle { display: block; }
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--line-1);
+  flex-shrink: 0;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.eyebrow {
+  font-family: var(--f-text);
+  font-size: var(--t-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rst-blue);
+  line-height: 1;
+}
+
+.title {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(24px, 3vw, 30px);
+  color: var(--ink-1);
+  margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.close {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 50%;
+  border: 1px solid var(--line-1);
+  background: var(--bg-tint);
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast),
+              transform var(--t-fast);
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.close:hover:not(:disabled) {
+  background: var(--bg-tint-deep);
+  color: var(--ink-1);
+}
+.close:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.close:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Form body : scroll interne ─── */
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 18px 24px 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lede {
+  font-family: var(--f-serif);
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-family: var(--f-text);
+  font-size: var(--t-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+  color: var(--ink-4);
+  font-size: 12px;
+}
+
+/* Inputs iOS : fond doux, pas de bordure dure, coins arrondis,
+   focus = glow bleu doux. Touch target ≥ 44px. */
+.field input,
+.field textarea {
+  font-family: var(--f-text);
+  font-size: 16px; /* 16px = pas de zoom iOS au focus */
+  color: var(--ink-1);
+  background: var(--bg-tint);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  outline: none;
+  transition: background var(--t-fast), border-color var(--t-fast),
+              box-shadow var(--t-fast);
+  width: 100%;
+  box-sizing: border-box;
+  min-height: var(--touch-min);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--ink-4);
+  font-weight: 400;
+}
+.field input:hover:not(:disabled),
+.field textarea:hover:not(:disabled) {
+  background: var(--bg-tint-deep);
+}
+.field input:focus,
+.field textarea:focus {
+  background: var(--bg-elevated);
+  border-color: var(--rst-blue-soft);
+  box-shadow: 0 0 0 4px var(--rst-blue-wash);
+}
+.field input:disabled,
+.field textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field textarea {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 170px;
+  padding: 14px 16px;
+}
+
+.counter {
+  align-self: flex-end;
+  font-family: var(--f-text);
+  font-size: 12px;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Photos picker ─── */
+.fileBtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-text);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 18px;
+  background: var(--bg-tint);
+  border: 1px dashed rgba(11, 15, 25, 0.22);
+  border-radius: var(--r-md);
+  color: var(--ink-2);
+  cursor: pointer;
+  min-height: var(--touch-min);
+  transition: background var(--t-fast), border-color var(--t-fast),
+              color var(--t-fast), transform var(--t-fast);
+}
+.fileBtn:hover:not(:disabled) {
+  background: var(--rst-blue-wash);
+  border-color: var(--rst-blue-soft);
+  color: var(--rst-blue-deep);
+}
+.fileBtn:active:not(:disabled) { transform: scale(0.98); }
+.fileBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.photoList {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.photoList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-tint);
+  border-radius: var(--r-sm);
+  font-family: var(--f-text);
+  font-size: 14px;
+}
+.photoName {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink-1);
+}
+.photoSize {
+  color: var(--ink-4);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.photoRemove {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: 0;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.photoRemove:hover {
+  color: var(--rst-red);
+  background: var(--rst-red-wash);
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.error {
+  font-family: var(--f-text);
+  font-size: 13px;
+  color: var(--rst-red-deep);
+  background: var(--rst-red-wash);
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ─── Footer : actions pinned, boutons pill ─── */
+.foot {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line-1);
+  background: var(--bg-elevated);
+  flex-shrink: 0;
+}
+
+.btnPrimary,
+.btnSecondary {
+  font-family: var(--f-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast),
+              border-color var(--t-fast), transform var(--t-fast),
+              box-shadow var(--t-fast);
+  min-height: var(--touch-min);
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+}
+
+.btnPrimary {
+  background: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.btnPrimary:hover:not(:disabled) {
+  background: var(--rst-blue-deep);
+}
+.btnPrimary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.btnPrimary:disabled {
+  background: var(--ink-5);
+  color: var(--bg-elevated);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px solid var(--line-soft);
+}
+.btnSecondary:hover:not(:disabled) {
+  background: var(--bg-tint);
+  color: var(--ink-1);
+}
+.btnSecondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── État succès ─── */
+.success {
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.successIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--rst-blue-wash);
+  color: var(--rst-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 500;
+  border: 1px solid rgba(30, 71, 161, 0.18);
+}
+
+.successTitle {
+  font-family: var(--f-serif);
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--ink-1);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.successBody {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 440px;
+  font-style: italic;
+}
+
+.successCta {
+  margin-top: 8px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 700px) {
+  .head { padding: 16px 20px 12px; }
+  .body { padding: 16px 20px 8px; }
+  .foot { padding: 12px 20px; }
+  .row  { grid-template-columns: 1fr; gap: 14px; }
+  .title { font-size: 22px; }
+  .success { padding: 36px 24px; }
+}

@@ -1,0 +1,693 @@
+import type { Sermon } from '../types';
+
+/* ============================================================
+   Prédications archivées sur la chaîne YouTube Kollonell.
+   ------------------------------------------------------------
+   - La majorité des entrées ci-dessous correspondent à de VRAIES
+     vidéos publiées par RST entre 2021 et 2026, avec leurs vrais
+     liens, leurs vrais titres et leurs vraies dates de diffusion.
+   - Les entrées marquées "DÉMO" réutilisent des URLs existantes
+     avec des dates ajustées pour étoffer 2025 et 2026 qui n'ont
+     pas encore beaucoup de captations indexées. Elles sont là
+     uniquement pour montrer le rendu d'une bibliothèque fournie
+     au commanditaire ; elles seront remplacées par les vraies
+     vidéos quand l'admin Django sera en place.
+   - typeCulte : voir TypeCulte dans src/types/index.ts.
+   ============================================================ */
+
+export const sermons: Sermon[] = [
+
+  /* ──────────────────────────────────────────────────────────
+     2026
+     ────────────────────────────────────────────────────────── */
+  {
+    id: 'demi-chretiens-2026-04-29',
+    titre: 'Nous ne sommes pas des demi-chrétiens.',
+    titleEm: 'des demi-chrétiens.',
+    serie: 'Culte du mercredi',
+    date: '2026-04-29',
+    heure: '19H30',
+    predicateur: 'Fr. Michel Orodapo',
+    typeCulte: 'culte-mercredi',
+    description:
+      "Service du mercredi à l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
+    videoUrl: 'https://www.youtube.com/watch?v=WmhljxW5zUU',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO — pour étoffer 2026 */
+  {
+    id: 'position-en-christ-2026-04-22',
+    titre: 'Notre position en Christ',
+    serie: 'Réunion de prière',
+    date: '2026-04-22',
+    heure: '19H30',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'reunion-priere',
+    description:
+      "Étude sur la position du croyant en Christ : adopté, réconcilié, justifié, appelé à marcher en nouveauté de vie.",
+    videoUrl: 'https://www.youtube.com/watch?v=CWaIdtRUpFs',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO — pour étoffer 2026 (Pâques) */
+  {
+    id: 'agreable-a-dieu-2026-04-05',
+    titre: "Efforçons-nous d'être agréable à Dieu",
+    titleEm: "agréable à Dieu",
+    serie: "Étude libre",
+    date: '2026-04-05',
+    heure: '09H00',
+    predicateur: 'Fr. Armand-Life Okamba',
+    typeCulte: 'culte-dimanche',
+    description:
+      "Méditation pascale sur la consécration et la sainteté quotidienne du croyant.",
+    videoUrl: 'https://www.youtube.com/watch?v=80bpt2ZqZhw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO — pour étoffer 2026 */
+  {
+    id: 'autorite-parole-parlee-2026-03-25',
+    titre: "L'autorité de la Parole parlée",
+    titleEm: "de la Parole parlée",
+    serie: "Étude doctrinale",
+    date: '2026-03-25',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description:
+      "Sur le pouvoir créatif de la Parole prononcée selon le ministère du Frère Branham.",
+    videoUrl: 'https://www.youtube.com/watch?v=YTvBpVgf4yA',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'cle-de-voute-bible',
+    titre: 'La clé de voûte de la Bible',
+    titleEm: 'de la Bible',
+    serie: 'Étude doctrinale',
+    date: '2026-02-01',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    duree: '1H 32MIN',
+    typeCulte: 'culte-dimanche',
+    description:
+      "Service dominical en direct depuis l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
+    videoUrl: 'https://www.youtube.com/watch?v=BIek0FhvbuE',
+    audioUrl: undefined,
+    passages: [
+      {
+        reference: 'Éphésiens 2 . 19-22',
+        texte:
+          "Ainsi donc, vous n'êtes plus des étrangers, ni des hommes du dehors ; mais vous êtes concitoyens des saints, gens de la maison de Dieu. Vous avez été édifiés sur le fondement des apôtres et des prophètes, Jésus-Christ lui-même étant la pierre angulaire.",
+      },
+      {
+        reference: '1 Pierre 2 . 6-7',
+        texte:
+          "Voici, je mets en Sion une pierre angulaire, choisie, précieuse ; et celui qui croit en elle ne sera point confus. L'honneur est donc pour vous, qui croyez. Mais, pour les incrédules, la pierre qu'ont rejetée ceux qui bâtissaient est devenue la principale de l'angle.",
+      },
+      {
+        reference: 'Psaume 118 . 22',
+        texte:
+          "La pierre qu'ont rejetée ceux qui bâtissaient est devenue la principale de l'angle.",
+      },
+    ],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ──────────────────────────────────────────────────────────
+     2025 — entrées DÉMO (URLs réelles d'autres années
+     repositionnées sur 2025 pour étoffer la bibliothèque)
+     ────────────────────────────────────────────────────────── */
+
+  /* DÉMO */
+  {
+    id: 'vivant-mourant-2025-12-14',
+    titre: 'Vivant, mourant, enseveli, ressuscitant, revenant',
+    titleEm: 'ressuscitant, revenant',
+    serie: 'Vivant, mourant, enseveli, ressuscitant, revenant',
+    numeroSerie: 4,
+    date: '2025-12-14',
+    heure: '17H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description:
+      "Méditation de l'Avent sur le Christ vivant, mort, enseveli, ressuscité et qui revient.",
+    videoUrl: 'https://www.youtube.com/watch?v=fN1IR_xUXN8',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO */
+  {
+    id: 'prendre-dieu-au-serieux-2025-10-22',
+    titre: 'Prendre Dieu au sérieux',
+    titleEm: 'au sérieux',
+    serie: 'Étude libre',
+    date: '2025-10-22',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description:
+      'Réfléchissant sur nos voies — appel à l\'examen de soi avant le retour du Seigneur.',
+    videoUrl: 'https://www.youtube.com/watch?v=0PJtIM5wneo',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO */
+  {
+    id: 'service-special-adoration-2025-09-28',
+    titre: "Service spécial d'adoration",
+    titleEm: "d'adoration",
+    serie: 'Événement spécial',
+    date: '2025-09-28',
+    heure: '09H00',
+    predicateur: 'Frère Luis Emmanuel Danda',
+    typeCulte: 'evenement-special',
+    description:
+      "Adoration et louange dans la présence du Seigneur — invité spécial à l'assemblée.",
+    videoUrl: 'https://www.youtube.com/watch?v=ckBQ8xqRYMA',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO */
+  {
+    id: 'loi-du-mariage-2025-06-22',
+    titre: 'La loi du mariage',
+    titleEm: 'du mariage',
+    serie: 'La loi du mariage',
+    numeroSerie: 3,
+    date: '2025-06-22',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description:
+      "Troisième volet de l'enseignement sur le mariage chrétien selon les Écritures.",
+    videoUrl: 'https://www.youtube.com/watch?v=9KYwYE_Z4Fo',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* DÉMO */
+  {
+    id: 'sortez-du-milieu-2025-02-16',
+    titre: "Sortez du milieu d'elle, mon peuple",
+    titleEm: "mon peuple",
+    serie: 'Étude libre',
+    date: '2025-02-16',
+    heure: '09H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'culte-dimanche',
+    description:
+      "Appel à la séparation du système de Babylone selon Apocalypse 18.",
+    videoUrl: 'https://www.youtube.com/watch?v=QD3Jx2ToQvQ',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ──────────────────────────────────────────────────────────
+     2024 — vraies vidéos
+     ────────────────────────────────────────────────────────── */
+  {
+    id: 'service-mercredi-23-10-2024',
+    titre: 'Service du mercredi',
+    serie: 'Culte du mercredi',
+    date: '2024-10-23',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description: 'Service en direct, mercredi soir.',
+    videoUrl: 'https://www.youtube.com/watch?v=oStj4xjdXzs',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'bon-et-fidele-serviteur-2024-10-13',
+    titre: 'Bon et fidèle serviteur',
+    titleEm: 'serviteur',
+    serie: 'Étude libre',
+    date: '2024-10-13',
+    heure: '09H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'culte-dimanche',
+    description: "Méditation sur la fidélité dans le service de l'Évangile.",
+    videoUrl: 'https://www.youtube.com/watch?v=0T3fd4EN9PM',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'rendre-service-volonte-2024-10-06',
+    titre: 'Rendre service à Dieu selon Sa volonté',
+    titleEm: 'selon Sa volonté',
+    serie: 'Rendre service à Dieu',
+    numeroSerie: 2,
+    date: '2024-10-06',
+    heure: '09H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'culte-dimanche',
+    description: "Deuxième volet de la série sur le service selon la volonté divine.",
+    videoUrl: 'https://www.youtube.com/watch?v=HASAfAx6UcA',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'rendre-un-service-volonte-2024-07-21',
+    titre: 'Rendre un service à Dieu selon Sa volonté',
+    titleEm: 'selon Sa volonté',
+    serie: 'Rendre service à Dieu',
+    numeroSerie: 1,
+    date: '2024-07-21',
+    heure: '09H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'culte-dimanche',
+    description: "Premier volet : qu'est-ce que servir Dieu selon Sa volonté ?",
+    videoUrl: 'https://www.youtube.com/watch?v=X6AF8K4Nc3Y',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'annonce-convention-2024',
+    titre: 'Une annonce très spéciale',
+    titleEm: 'très spéciale',
+    serie: 'Convention Internationale',
+    date: '2024-06-30',
+    heure: '10H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'convention',
+    description: 'Annonce officielle du pasteur — Convention internationale 2024.',
+    videoUrl: 'https://www.youtube.com/watch?v=5p7hZBQZkrw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'efforcons-nous-2024-05-26',
+    titre: "Efforçons-nous d'être agréable à Dieu (Partie 2)",
+    titleEm: "agréable à Dieu",
+    serie: "Efforçons-nous d'être agréable à Dieu",
+    numeroSerie: 2,
+    date: '2024-05-26',
+    heure: '09H00',
+    predicateur: 'Fr. Armand-Life Okamba',
+    typeCulte: 'culte-dimanche',
+    description: 'Deuxième partie sur la consécration du croyant.',
+    videoUrl: 'https://www.youtube.com/watch?v=80bpt2ZqZhw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'autorite-parole-parlee-2024-05-01',
+    titre: "L'autorité de la Parole parlée",
+    titleEm: "de la Parole parlée",
+    serie: "Étude doctrinale",
+    date: '2024-05-01',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description:
+      "Sur le pouvoir créatif de la Parole prononcée selon le ministère du Frère Branham.",
+    videoUrl: 'https://www.youtube.com/watch?v=YTvBpVgf4yA',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ──────────────────────────────────────────────────────────
+     2023 — vraies vidéos
+     ────────────────────────────────────────────────────────── */
+  {
+    id: 'prendre-dieu-au-serieux-2023-12-27',
+    titre: 'Prendre Dieu au sérieux',
+    titleEm: 'au sérieux',
+    serie: 'Étude libre',
+    date: '2023-12-27',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description: 'Réfléchissant sur nos voies en cette fin d\'année.',
+    videoUrl: 'https://www.youtube.com/watch?v=0PJtIM5wneo',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'loi-du-mariage-2023-12-17',
+    titre: 'La loi du mariage (Partie 2)',
+    titleEm: 'du mariage',
+    serie: 'La loi du mariage',
+    numeroSerie: 2,
+    date: '2023-12-17',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: 'Deuxième volet de l\'enseignement sur le mariage chrétien.',
+    videoUrl: 'https://www.youtube.com/watch?v=9KYwYE_Z4Fo',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'service-special-adoration-2023-09-03',
+    titre: "Service spécial d'adoration",
+    titleEm: "d'adoration",
+    serie: 'Événement spécial',
+    date: '2023-09-03',
+    heure: '09H00',
+    predicateur: 'Frère Luis Emmanuel Danda',
+    typeCulte: 'evenement-special',
+    description: "Service spécial avec un frère invité, dans la présence du Seigneur.",
+    videoUrl: 'https://www.youtube.com/watch?v=ckBQ8xqRYMA',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'vie-eternelle-recevoir-2023-05-10',
+    titre: 'La vie éternelle et comment la recevoir',
+    titleEm: 'la recevoir',
+    serie: 'Étude libre',
+    date: '2023-05-10',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description: "Sur le don de la vie éternelle en Jésus-Christ.",
+    videoUrl: 'https://www.youtube.com/watch?v=7Ceh5rsIXMI',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'vivant-mourant-2023-04-09',
+    titre: 'Vivant, mourant, enseveli, ressuscitant, revenant',
+    titleEm: 'ressuscitant, revenant',
+    serie: 'Vivant, mourant, enseveli, ressuscitant, revenant',
+    numeroSerie: 3,
+    date: '2023-04-09',
+    heure: '17H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'evenement-special',
+    description: "Méditation pascale (soirée du dimanche de Pâques).",
+    videoUrl: 'https://www.youtube.com/watch?v=fN1IR_xUXN8',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'sortez-du-milieu-2023-02-12',
+    titre: "Sortez du milieu d'elle, mon peuple",
+    titleEm: "mon peuple",
+    serie: 'Étude libre',
+    date: '2023-02-12',
+    heure: '09H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'culte-dimanche',
+    description: "Appel à la séparation selon Apocalypse 18.",
+    videoUrl: 'https://www.youtube.com/watch?v=QD3Jx2ToQvQ',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'ordre-eglise-dimes-2023-02-04',
+    titre: "L'ordre de l'Église — Dîmes et offrandes",
+    titleEm: 'Dîmes et offrandes',
+    serie: "L'Ordre de l'Église",
+    date: '2023-02-04',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'etude-doctrinale',
+    description: "Enseignement sur les dîmes et offrandes selon l'ordre biblique.",
+    videoUrl: 'https://www.youtube.com/watch?v=6bqAccb04To',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ──────────────────────────────────────────────────────────
+     2022 — vraies vidéos
+     ────────────────────────────────────────────────────────── */
+  {
+    id: 'caractere-des-membres',
+    titre: "Le caractère des membres fait la beauté d'une église",
+    titleEm: "d'une église",
+    serie: "L'Ordre de l'Église",
+    date: '2022-11-13',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: 'Service dominical du 13 novembre 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=BVIswVRY-EQ',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'puissances-eglise-2022-07-24',
+    titre: "Les puissances qui gouvernent l'Église (Partie 3)",
+    titleEm: "qui gouvernent l'Église",
+    serie: "Les puissances qui gouvernent l'Église",
+    numeroSerie: 3,
+    date: '2022-07-24',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'evenement-special',
+    description: "Convention à Boston, USA — troisième volet de la série.",
+    videoUrl: 'https://www.youtube.com/watch?v=-omRn9MeN3k',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'reunion-priere-juillet-2022',
+    titre: 'Réunion de prière',
+    serie: 'Réunion de prière',
+    date: '2022-07-20',
+    heure: '19H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'reunion-priere',
+    description: 'Réunion de prière du mercredi 20 juillet 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=FjNRwIwdbYw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'reunion-priere-juin-2022',
+    titre: 'Réunion de prière',
+    serie: 'Réunion de prière',
+    date: '2022-06-22',
+    heure: '19H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'reunion-priere',
+    description: 'Réunion de prière du mercredi 22 juin 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=B3gvDbxnCF8',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'vrai-sens-calvaire',
+    titre: 'Le vrai sens du Calvaire',
+    titleEm: 'du Calvaire',
+    serie: 'Étude libre',
+    date: '2022-04-17',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'evenement-special',
+    description: 'Méditation pascale.',
+    videoUrl: 'https://www.youtube.com/watch?v=Xw3toA100_4',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'pouvoir-du-sang',
+    titre: 'Le pouvoir du sang de Jésus-Christ',
+    titleEm: 'de Jésus-Christ',
+    serie: 'Étude libre',
+    date: '2022-04-13',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
+    description: 'Service du mercredi 13 avril 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=dzvVBbZlVoM',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'reunion-priere-mars-2022',
+    titre: 'Réunion de prière — Dieu nous écoute',
+    titleEm: 'Dieu nous écoute',
+    serie: 'Réunion de prière',
+    date: '2022-03-23',
+    heure: '19H00',
+    predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'reunion-priere',
+    description: 'Réunion de prière du mercredi 23 mars 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=hFlqAMz3a78',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'choix-epouse-2022-02-02',
+    titre: "Le choix d'une épouse (suite, partie 2)",
+    titleEm: "d'une épouse",
+    serie: "Le choix d'une épouse",
+    numeroSerie: 2,
+    date: '2022-02-02',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'etude-doctrinale',
+    description: "Étude sur le choix de l'épouse, enseignement du Frère Branham.",
+    videoUrl: 'https://www.youtube.com/watch?v=58XN6kEiafo',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'veritable-revelation-eglise-10',
+    titre: 'La véritable révélation de la véritable Église — part. 10',
+    serie: 'La véritable révélation de la véritable Église',
+    numeroSerie: 10,
+    date: '2022-01-16',
+    heure: '09H00',
+    predicateur: 'Past. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: "Dixième volet de la série doctrinale sur l'Église.",
+    videoUrl: 'https://www.youtube.com/watch?v=WNwUFO-C9Dk',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ──────────────────────────────────────────────────────────
+     2021 — vraies vidéos
+     ────────────────────────────────────────────────────────── */
+  {
+    id: 'infaillibilite-promesses-divines',
+    titre: "L'infaillibilité des promesses divines",
+    titleEm: 'des promesses divines',
+    serie: 'Étude libre',
+    date: '2021-11-07',
+    heure: '09H00',
+    predicateur: 'Past. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: 'Méditation sur la fidélité de Dieu à Sa Parole.',
+    videoUrl: 'https://www.youtube.com/watch?v=NumCPxov-aw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'obstacles-saint-esprit-2021-09-19',
+    titre: "Les obstacles qui empêchent de recevoir le Saint-Esprit",
+    titleEm: "le Saint-Esprit",
+    serie: "Les obstacles qui empêchent de recevoir le Saint-Esprit",
+    numeroSerie: 8,
+    date: '2021-09-19',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: "Huitième volet de la série sur les obstacles à la plénitude du Saint-Esprit.",
+    videoUrl: 'https://www.youtube.com/watch?v=kyDU2RQ3t3A',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  {
+    id: 'espere-en-eternel',
+    titre: "Ce qui espère en l'Éternel ne mourra jamais",
+    titleEm: 'ne mourra jamais',
+    serie: 'Étude libre',
+    date: '2021-01-30',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
+    description: "Méditation sur l'espérance chrétienne.",
+    videoUrl: 'https://www.youtube.com/watch?v=QeGaWZ4BGcE',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+];

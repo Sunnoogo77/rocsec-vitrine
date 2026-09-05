@@ -1,0 +1,18 @@
+/* ============================================================
+   HairlineDivider — filet 1px ou 1.5px discret.
+   Adapté à la palette Liquid Glass : la version "soft" devient
+   plus aérienne via --line-1.
+   ============================================================ */
+
+.divider {
+  border: none;
+  margin: 0;
+}
+
+.soft {
+  border-top: 1px solid var(--line-1);
+}
+
+.major {
+  border-top: 1.5px solid var(--ink-1);
+}

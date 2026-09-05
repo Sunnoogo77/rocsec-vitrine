@@ -1,0 +1,135 @@
+<svg viewBox="0 0 240 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+  <defs>
+    <linearGradient id="eiffelGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#dde4f0" stop-opacity="1"/>
+      <stop offset="55%"  stop-color="#cdd8ea" stop-opacity=".92"/>
+      <stop offset="100%" stop-color="#bccce0" stop-opacity=".6"/>
+    </linearGradient>
+    <!-- Cross-hatch lattice pattern -->
+    <pattern id="latt" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="6" y2="6" stroke="#0c0e14" stroke-width=".45" opacity=".5"/>
+      <line x1="6" y1="0" x2="0" y2="6" stroke="#0c0e14" stroke-width=".45" opacity=".5"/>
+    </pattern>
+    <!-- Horizontal lattice for upper section -->
+    <pattern id="lattH" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="4" y2="4" stroke="#0c0e14" stroke-width=".35" opacity=".45"/>
+      <line x1="4" y1="0" x2="0" y2="4" stroke="#0c0e14" stroke-width=".35" opacity=".45"/>
+    </pattern>
+  </defs>
+
+  <!-- ── ANTENNA & SPIRE ───────────────────────────────────────────────── -->
+  <rect x="119.2" y="4"  width="1.6" height="28" fill="#dde4f0"/>
+  <rect x="118"   y="32" width="4"   height="4"  fill="#d5dce8"/>
+  <rect x="116.5" y="36" width="7"   height="3"  fill="#d5dce8"/>
+
+  <!-- ── UPPER COLUMN (above 2nd floor) ───────────────────────────────── -->
+  <!-- Main solid shape from spire to first floor, single path -->
+  <path fill="url(#eiffelGrad)" d="
+    M 118.5 39
+    L 121.5 39
+    L 122   56
+    C 122 58 128 64 132 68
+    L 132 76
+    L 127 76
+    L 127 102
+    C 129 122 131 152 132 182
+    L 148 186  L 148 200  L 133 197
+    C 135 230 137 270 138 314
+    L 154 318  L 154 334  L 139 330
+    C 143 368 154 422 170 470
+    C 186 518 207 554 224 582
+    L 16 582
+    C 33 554 54 518 70 470
+    C 86 422 97 368 101 330
+    L 86 334  L 86 318  L 102 314
+    C 103 270 105 230 107 197
+    L 92 200  L 92 186  L 108 182
+    C 109 152 111 122 113 102
+    L 113 76
+    L 108 76
+    L 108 68
+    C 112 64 118 58 118 56
+    Z
+  "/>
+
+  <!-- ── LATTICE OVERLAYS ──────────────────────────────────────────────── -->
+  <!-- Lower body lattice (first floor and below) -->
+  <path fill="url(#latt)" d="
+    M 224 582 C 207 554 186 518 170 470
+    C 154 422 143 368 139 330
+    L 154 334  L 154 318  L 138 314
+    C 137 270 135 230 133 197
+    L 148 200  L 148 186  L 132 182
+    C 131 152 129 122 127 102
+    L 127 76  L 113 76  L 113 102
+    C 111 122 109 152 108 182
+    L 92 186  L 92 200  L 107 197
+    C 105 230 103 270 102 314
+    L 86 318  L 86 334  L 101 330
+    C 97 368 86 422 70 470
+    C 54 518 33 554 16 582 Z
+  "/>
+  <!-- Upper section finer lattice -->
+  <path fill="url(#lattH)" d="
+    M 127 76 L 127 102
+    C 129 122 131 152 132 182
+    L 108 182 C 109 152 111 122 113 102
+    L 113 76 Z
+  "/>
+
+  <!-- ── ARCH — negative space between the base legs ───────────────────── -->
+  <path fill="#0a0a0d" d="
+    M 16 582 C 44 512 86 484 120 484 C 154 484 196 512 224 582 Z
+  "/>
+
+  <!-- ── STRUCTURAL BANDS (horizontal platforms) ──────────────────────── -->
+  <!-- Top bracket flanges -->
+  <rect x="106"  y="64"  width="28"  height="4"   fill="#cdd8ea" rx="0.5"/>
+  <!-- Observation deck above 2nd floor (~y=72-78) -->
+  <rect x="106"  y="72"  width="28"  height="4"   fill="#cdd8ea" rx="0.5"/>
+  <!-- 2nd floor platform -->
+  <rect x="88"   y="186" width="64"  height="7"   fill="#c8d4e8"/>
+  <rect x="84"   y="193" width="72"  height="4"   fill="#bcc8de"/>
+  <!-- 1st floor platform -->
+  <rect x="84"   y="318" width="72"  height="7"   fill="#c4d0e6"/>
+  <rect x="80"   y="325" width="80"  height="4"   fill="#b8c8e0"/>
+  <!-- Ground base feet -->
+  <rect x="12"   y="578" width="216" height="6"   fill="#0a0a0d"/>
+
+  <!-- ── STRUCTURAL CROSS-BRACES (diagonal struts) ─────────────────────── -->
+  <g stroke="#0c0e14" stroke-width=".6" fill="none" opacity=".65">
+    <!-- Upper column braces -->
+    <line x1="113" y1="80"  x2="127" y2="100"/>
+    <line x1="127" y1="80"  x2="113" y2="100"/>
+    <line x1="113" y1="100" x2="127" y2="130"/>
+    <line x1="127" y1="100" x2="113" y2="130"/>
+    <line x1="113" y1="130" x2="127" y2="160"/>
+    <line x1="127" y1="130" x2="113" y2="160"/>
+    <!-- Between 2nd floor and 1st floor -->
+    <line x1="107" y1="200" x2="133" y2="240"/>
+    <line x1="133" y1="200" x2="107" y2="240"/>
+    <line x1="106" y1="240" x2="134" y2="285"/>
+    <line x1="134" y1="240" x2="106" y2="285"/>
+    <line x1="104" y1="285" x2="136" y2="314"/>
+    <line x1="136" y1="285" x2="104" y2="314"/>
+    <!-- Below 1st floor — the curved legs -->
+    <line x1="100" y1="335" x2="150" y2="400"/>
+    <line x1="150" y1="335" x2="100" y2="400"/>
+    <line x1="88"  y1="400" x2="164" y2="468"/>
+    <line x1="164" y1="400" x2="88"  y2="468"/>
+    <line x1="68"  y1="470" x2="180" y2="540"/>
+    <line x1="180" y1="470" x2="68"  y2="540"/>
+  </g>
+
+  <!-- ── HORIZONTAL LEVEL WIRES ────────────────────────────────────────── -->
+  <g stroke="#cdd8ea" stroke-width=".8" opacity=".6" fill="none">
+    <line x1="113" y1="90"  x2="127" y2="90"/>
+    <line x1="113" y1="120" x2="127" y2="120"/>
+    <line x1="113" y1="150" x2="127" y2="150"/>
+    <line x1="107" y1="220" x2="133" y2="220"/>
+    <line x1="106" y1="260" x2="134" y2="260"/>
+    <line x1="100" y1="360" x2="140" y2="360"/>
+    <line x1="92"  y1="430" x2="148" y2="430"/>
+    <line x1="68"  y1="510" x2="172" y2="510"/>
+  </g>
+</svg>

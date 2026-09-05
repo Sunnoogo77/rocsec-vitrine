@@ -1,0 +1,361 @@
+{
+  "lang": "EN",
+
+  "nav": {
+    "accueil": "Home",
+    "nehemie": "Nehemiah Project",
+    "histoire": "History",
+    "genese": "Genesis",
+    "eglise": "The Church",
+    "live": "LIVE",
+    "liveLabel": "Live stream"
+  },
+
+  "eglise": {
+    "nav": {
+      "cette-semaine": "This week",
+      "cultes": "Services",
+      "cantiques": "Hymns",
+      "annonces": "Announcements",
+      "temoignages": "Testimonies"
+    },
+    "cetteSemaine": {
+      "majLbl": "Updated",
+      "filMessage": "Message thread",
+      "galerieTitre": "Images of the week",
+      "galerieMeta": "Week {{n}} · {{count}} photos",
+      "galerieNote": "asymmetric grid · {{count}} placeholders · the media team replaces these after each service",
+      "galeriePlaceholder": "Photo · to be provided",
+      "cantiqueLabel": "Special hymn",
+      "temoignageLabel": "Testimony of the week",
+      "annoncesTitre": "Announcements",
+      "annoncesSub": "upcoming.",
+      "voirToutes": "See all announcements →",
+      "badgeReplay": "REPLAY",
+      "playReplay": "Watch the replay",
+      "playCantique": "Play the hymn"
+    },
+    "cultes": {
+      "eyebrow": "Sermons of the assembly",
+      "titreLine1": "« Faith comes from hearing,",
+      "titreLine2": "and hearing from the word of God. »",
+      "ref": "Romans 10 . 17",
+      "lede": "Each service is preserved here as a study object — video, biblical passages cited, prophet quotes and structural outline gathered in a single sheet for reading, meditation and sharing.",
+      "branText": "« The preached Word is the seed; it does not fall to the ground, it remains, it germinates in its time. »",
+      "branCite": "— W. M. Branham · THE SPOKEN WORD IS THE ORIGINAL SEED · 62-0318M"
+    },
+    "cantiques": {
+      "eyebrow": "The hymnal",
+      "titreLine1": "« Let everything that has breath",
+      "titreLine2": "praise the Lord! »",
+      "ref": "Psalms 150 . 6",
+      "lede": "The hymns are the voice of Roc Séculaire. Those from the hymnal, those from the Message, those born here. Three families, one hymnbook."
+    },
+    "annonces": {
+      "eyebrow": "Church bulletin",
+      "titreLine1": "What's coming,",
+      "titreLine2": "what's being prepared.",
+      "lede": "Meetings, trips, outings, special occasions. The bulletin lists all announcements — past, today, upcoming."
+    },
+    "temoignages": {
+      "eyebrow": "Wall of testimonies",
+      "titreLine1": "What God",
+      "titreLine2": "has done among us.",
+      "lede": "No ratings. No stars. Just stories — short or long, anonymous or named. A testimony is a pastoral account, not a recommendation."
+    }
+  },
+
+  "footer": {
+    "identitePhrase1": "Christian assembly",
+    "identitePhrase2": "Roc Séculaire Tabernacle.",
+    "localisation": "Location",
+    "horaires": "Schedule",
+    "secretariat": "Church secretariat",
+    "salle": "Room 2: Bacchus",
+    "voirMaps": "View on Google Maps →",
+    "schedule": {
+      "wed": "Wednesday",
+      "sun": "Sunday",
+      "fri": "Friday",
+      "wedTime": "7:00 PM — 9:00 PM · Service",
+      "sunTime": "9:00 AM — 12:30 PM · Service",
+      "friTime": "from 7:00 PM · Prayer meeting"
+    },
+    "youtube": "YouTube channel →",
+    "legal": "© {{year}} Roc Séculaire Tabernacle · Vitry-sur-Seine"
+  },
+
+  "actions": {
+    "contribuer": "Contribute",
+    "decouvrir": "Discover the church",
+    "ecouterMessage": "Listen to the message",
+    "voirReplay": "Watch replay",
+    "voirAnnonces": "See all announcements",
+    "enSavoirPlus": "Learn more",
+    "lireRecit": "Read full account",
+    "partager": "Share",
+    "telechargerAudio": "Audio MP3",
+    "telechargerVideo": "Video MP4",
+    "telechargerPlan": "Outline PDF",
+    "tousMessages": "All messages",
+    "telechargerAffiche": "↓ Download poster",
+    "ouvrirGrand": "Open large",
+    "retourAnnonces": "← Back to announcements",
+    "retourTemoignages": "← Back to testimonies",
+    "retourHymnaire": "← Back to the hymnal",
+    "voirTableau": "View the dashboard",
+    "decouvrirProjet": "Discover the project →",
+    "annoncePrecedente": "Previous announcement",
+    "annonceSuivante": "Next announcement"
+  },
+
+  "cantiques": {
+    "tous": "All",
+    "recueil": "From the hymnal",
+    "message": "From the Message",
+    "compose": "Composed here",
+    "recherche": "Search a hymn",
+    "paroles": "Lyrics",
+    "parolesEmpty": "Lyrics to be filled in by the music team.",
+    "lirePrefixe": "Play",
+    "toolbar": {
+      "reduire": "A−",
+      "normal": "A",
+      "agrandir": "A+",
+      "pdf": "↓ PDF"
+    }
+  },
+
+  "annonces": {
+    "etat": "Status",
+    "type": "Type",
+    "monthCount": "{{count}} announcement",
+    "monthCount_plural": "{{count}} announcements",
+    "empty": "No announcement matches these filters.",
+    "filtres": {
+      "toutes": "All",
+      "aVenir": "Upcoming",
+      "aujourdhui": "Today",
+      "passees": "Past"
+    },
+    "types": {
+      "reunion": "Meeting",
+      "voyage": "Trip",
+      "sortie": "Outing",
+      "exceptionnelle": "Special"
+    },
+    "statuts": {
+      "a-venir": "Upcoming",
+      "aujourd-hui": "Today",
+      "passee": "Past"
+    },
+    "detail": {
+      "quand": "When",
+      "ou": "Where",
+      "type": "Type",
+      "compteRenduEyebrow": "Report",
+      "compteRenduTitre": "What happened",
+      "waiting": "The poster and detailed program will be published soon."
+    }
+  },
+
+  "cultes": {
+    "classerPar": "Sort by",
+    "periode": "Period",
+    "rechercher": "Search · title, verse, keyword",
+    "voirPlus": "Show more services ↓",
+    "passagesEmpty": "Passages to be filled in.",
+    "citationsEmpty": "Quotes to be filled in.",
+    "planEmpty": "Outline to be filled in.",
+    "filtres": {
+      "date": "Date",
+      "serie": "Series",
+      "livre": "Biblical book"
+    },
+    "periodes": {
+      "2026": "2026",
+      "2025": "2025",
+      "2024": "2024",
+      "archives": "Archives ↓"
+    },
+    "onglets": {
+      "passages": "Passages",
+      "citations": "Branham Quotes",
+      "plan": "Outline"
+    }
+  },
+
+  "temoignages": {
+    "partager": "+ Share my testimony",
+    "compteur": "{{count}} testimonies · since {{depuis}}",
+    "lireRecit": "Read full account →",
+    "versetCite": "Verse cited in this account"
+  },
+
+  "nehemie": {
+    "heroEyebrow": "Roc Séculaire Tabernacle",
+    "heroTitleLine1": "A place to",
+    "heroTitleLine2": "Worship and Build.",
+    "heroSub": "Together, let us acquire a permanent place of worship for the glory of God and the service of generations to come.",
+    "heroQuote": "The people had a mind to work.",
+    "heroQuoteRef": "Nehemiah 4 . 6",
+
+    "contentEyebrow": "Nehemiah Project",
+    "contentTitle": "A house to prepare together.",
+    "objectiveTitle": "Acquire a permanent place of worship for the extension of God's work.",
+    "progressNote": "Indicative figures · updated monthly",
+    "whyTitle": "Why this project?",
+    "whyItems": [
+      "Offer a stable place for worship and teaching",
+      "Welcome current and future generations",
+      "Develop our spiritual activities",
+      "Have our own space accessible at all times"
+    ],
+    "buildTitle": "What we will build",
+    "buildItems": [
+      "A modern and functional worship hall",
+      "Spaces for meetings, appointments and activities",
+      "A warm and accessible place for all"
+    ],
+    "participationTitle": "How to participate?",
+    "participationItems": [
+      "Through prayer",
+      "By sharing the project",
+      "By giving according to your means"
+    ],
+    "appealTitle": "Our appeal",
+    "appealText": "As in Nehemiah's time, everyone has a part to play. Let us unite, believe and build!",
+    "appealVerse": "Do not despise the day of small beginnings.",
+    "appealRef": "Zechariah 4:10",
+    "goFurtherTitle": "Together, let us go further!",
+    "goFurtherText": "This project is not only a building; it is a work for God and a legacy for our children.",
+    "goFurtherVerse": "God will provide!",
+    "goFurtherRef": "Philippians 4 . 19",
+    "followTitle": "Follow the project's progress",
+    "followText": "Stay informed every month through our communications (WhatsApp), meetings, posters and website.",
+    "waysTitle": "Ways to participate",
+    "waysText": "Cash · Bank transfer · Online giving",
+    "payCashLbl": "Cash",
+    "payBankLbl": "Bank transfer",
+    "payOnlineLbl": "Online giving",
+    "contactEmail": "roc.seculaire.france@gmail.com",
+    "contactPhone": "+33 7 52 27 85 85",
+
+    "objectif": "Goal",
+    "collecte": "Raised",
+    "collectes": "Raised",
+    "restant": "Remaining",
+    "objectifAtteint": "of goal reached",
+    "miseAJour": "Last updated:",
+    "reste": "Still to raise",
+
+    "avancementEyebrow": "Project progress",
+    "participerEyebrow": "Take part in this work",
+    "participer": {
+      "priezLabel": "Pray",
+      "priezDesc": "Support the project in prayer.",
+      "partagezLabel": "Share",
+      "partagezDesc": "Tell people around you.",
+      "donnezLabel": "Give",
+      "donnezDesc": "Contribute according to your means."
+    },
+    "donCta": "♥ Make a donation",
+    "futurEyebrow": "Our future place of worship",
+    "futurTitre": "A stable sanctuary to serve.",
+    "futurCaption": "A space dedicated to the presence of God, to the teaching of the Word and to the transformation of lives.",
+
+    "contributions": {
+      "titre": "Choose your contribution"
+    },
+    "donner": {
+      "titre": "How to give",
+      "virement": "Bank transfer",
+      "cheque": "Cheque",
+      "carte": "Card",
+      "especes": "Cash"
+    }
+  },
+
+  "histoire": {
+    "sections": {
+      "commencements": "The beginnings",
+      "enracinement": "Taking root",
+      "extension": "Expansion",
+      "aujourd-hui": "Today"
+    }
+  },
+
+  "genese": {
+    "nav": {
+      "sommaire": "Summary",
+      "presentation": "Presentation",
+      "naissance": "Birth",
+      "mission": "Mission",
+      "branham": "W. M. Branham",
+      "actes": "Acts of the Holy Spirit",
+      "offices": "Offices",
+      "services": "Services"
+    }
+  },
+
+  "accueil": {
+    "heroAssemblee": "Christian Assembly",
+    "heroTitleLine1": "Roc Séculaire",
+    "heroTitleLine2": "Tabernacle",
+    "scheduleEyebrow": "Upcoming meetings",
+    "scheduleTitleLine1": "We gather",
+    "scheduleTitleLine2": "three times a week.",
+    "scheduleDays": {
+      "mercredi": "WEDNESDAY",
+      "dimanche": "SUNDAY",
+      "vendredi": "FRIDAY"
+    },
+    "scheduleLabels": {
+      "mercrediMain": "Service",
+      "dimancheMain": "Service",
+      "vendrediMain": "Prayer meeting",
+      "addrBacchus": "Salle Bacchus, Vitry-sur-Seine",
+      "addrVendredi": "* different location — please contact us"
+    },
+    "scheduleTime": {
+      "des": "from {{heure}}",
+      "dimanche": "{{debut}} — 12:30 PM",
+      "interval": "{{debut}} — {{fin}}"
+    },
+    "scheduleFootPin": "Room 2: Bacchus",
+    "scheduleFootAddr": "— 64 av. du Groupe Manouchian, 94400 Vitry sur Seine",
+    "scheduleFootMap": "View on map →",
+
+    "lastMsgEyebrow": "Latest message",
+    "lastMsgYouTube": "YOUTUBE · LIVE REPLAY",
+    "lastMsgPlay": "Play the video",
+    "lastMsgCulteSuffix": "Service",
+
+    "motDuPasteur": {
+      "eyebrow": "Pastor's word",
+      "titre": "A word from the pastor.",
+      "cta": "Church history →"
+    },
+
+    "nehemieBanner": {
+      "eyebrow": "Nehemiah Project",
+      "titreLine1": "Let us build",
+      "titreLine2": "together.",
+      "desc": "Acquisition and renovation of a permanent hall for prayer, teaching and the outreach of the assembly. Every gift brings us closer.",
+      "raisedSuffix": "raised",
+      "goalPrefix": "Goal",
+      "percentSuffix": "of the way completed",
+      "imgAlt": "View of the Nehemiah Project sanctuary"
+    }
+  },
+
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "logoAlt": "Roc Séculaire Tabernacle logo",
+    "portraitAlt": "Portrait",
+    "langFr": "Switch to French",
+    "langEn": "Switch to English"
+  }
+}

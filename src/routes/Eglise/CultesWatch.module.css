@@ -1,0 +1,1290 @@
+/* ============================================================
+   CULTES WATCH — page dédiée à la visualisation
+   Layout fixe (height: 100vh) sans scroll global :
+     - Topbar custom 56px
+     - Body en grid : sidebar | center | suggestions
+     - Le centre est la SEULE zone scrollable
+   ============================================================ */
+
+.watchPage {
+  --topbar-h: 56px;
+  --sidebar-w: 260px;
+  --sidebar-rail-w: 60px;
+  --sugg-w: 320px;
+  --center-radius: 28px;
+  /* Bleu nuit IDENTIQUE au hero glass dark de la bibliothèque
+     (Cultes hero : linear-gradient #06091c -> #030617 + halo bleu).
+     Topbar et sidebars partagent ce fond pour qu'ils se confondent
+     visuellement et donnent une seule masse sombre cohérente avec
+     le reste du site. */
+  --rst-dark-glass:
+    radial-gradient(ellipse 60% 90% at 0% 0%, rgba(30, 71, 161, 0.18) 0%, transparent 70%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  --rst-dark-solid: #06091c;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* dvh = dynamic viewport. Sur mobile, se rétracte quand le clavier
+     iOS apparaît pour que les inputs ne soient pas masqués. */
+  height: 100dvh;
+  /* Le fond global est sombre — la zone centrale viendra par-dessus
+     en clair, avec ses coins arrondis qui créent la transition douce. */
+  background: var(--rst-dark-solid);
+  color: var(--ink-1);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOPBAR fixe — bleu foncé glass dark, atmosphère unifiée
+   ══════════════════════════════════════════════════════════ */
+.topbar {
+  height: calc(var(--topbar-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  flex-shrink: 0;
+  display: grid;
+  /* Desktop : back + brand + search (le bouton mobile Filtrer est masqué). */
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding-right: max(24px, var(--safe-right));
+  padding-left: max(24px, var(--safe-left));
+  background: var(--rst-dark-glass);
+  /* PAS de border-bottom : fusion visuelle avec la sidebar en dessous,
+     la transition vers le centre clair est faite par les coins arrondis
+     du .center, pas par une ligne ici. */
+  color: rgba(255, 255, 255, 0.92);
+  z-index: 100;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--f-text);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  transform: translateX(-2px);
+}
+
+.topbarBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbarLogo {
+  display: block;
+  width: 36px;
+  height: auto;
+}
+
+.topbarBrandLbl {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.topbarSearch {
+  justify-self: end;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: box-shadow var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.topbarSearch:focus-within {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--rst-blue-soft);
+  box-shadow: 0 0 0 3px rgba(79, 115, 199, 0.24);
+}
+
+.searchIcon {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.topbarSearch input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-family: var(--f-text);
+  font-size: 13px;
+  color: #fff;
+  min-width: 0;
+}
+.topbarSearch input::placeholder { color: rgba(255, 255, 255, 0.46); }
+
+.searchClear {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.searchClear:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: scale(1.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BODY — grid 2 colonnes : sidebar (sombre) | reste (blanc)
+   Les suggestions sont en position: absolute par-dessus le centre
+   blanc, comme une carte flottante. La masse sombre se limite donc
+   à la topbar + sidebar (forme en L) ; tout le reste est blanc.
+   ══════════════════════════════════════════════════════════ */
+.body {
+  flex: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  gap: 0;
+  min-height: 0;
+  overflow: hidden;
+  transition: grid-template-columns 460ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bodySidebarRail {
+  grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr);
+}
+/* La classe .bodySuggestionsClosed ne change plus la grille (elles sont
+   en absolute), mais elle déclenche la suppression du padding-right
+   réservé sur .center (voir plus bas). */
+
+/* ══════════════════════════════════════════════════════════
+   SIDEBAR FILTRES — fixe, scroll interne, mode full / rail
+   ══════════════════════════════════════════════════════════ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--rst-dark-solid);
+  /* PAS de border-right : fusion visuelle avec topbar et centre.
+     Le centre arrive avec son border-radius pour faire la transition. */
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+}
+
+.sidebarHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Mode rail : padding centré, header compact */
+.sidebarRail .sidebarHead {
+  padding: 14px 8px;
+  justify-content: center;
+  border-bottom: 0;
+}
+
+/* Bouton toggle bien identifiable : pastille distincte avec
+   contraste clair sur le fond bleu nuit. */
+.sidebarToggle {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.sidebarToggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Mode rail : 5 icônes verticales */
+.sidebarRailIcons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.railIcon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-xs);
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast),
+              border-color var(--t-fast), transform var(--t-fast);
+}
+.railIcon:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.sidebarLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Footer du sidebar : isole le bouton "Réinitialiser" pour qu'il
+   ne soit plus confondu avec le bouton réduire la barre. */
+.sidebarFoot {
+  flex-shrink: 0;
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebarReset {
+  display: block;
+  width: 100%;
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  padding: 9px 16px;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.sidebarReset:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.sidebarReset:disabled {
+  color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.06);
+  cursor: not-allowed;
+}
+
+.sidebarScroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 8px 14px 20px;
+}
+
+.filterGroup {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 4px 0;
+}
+.filterGroup:last-child { border-bottom: 0; }
+
+.filterGroupTitle {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 4px;
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.86);
+  user-select: none;
+  transition: color var(--t-fast);
+}
+.filterGroupTitle::-webkit-details-marker { display: none; }
+.filterGroupTitle:hover { color: #fff; }
+
+.filterGroupTitleLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.filterGroupIcon {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.filterChevron {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.44);
+  transition: transform var(--t-fast);
+}
+.filterGroup[open] .filterChevron { transform: rotate(-180deg); }
+
+.filterRows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 0 10px 4px;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 6px;
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  transition: background var(--t-fast);
+  font-family: var(--f-text);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
+}
+.filterRow:hover { background: rgba(255, 255, 255, 0.06); }
+
+.filterCheckbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  flex-shrink: 0;
+  position: relative;
+}
+.filterCheckbox:checked {
+  background: var(--rst-blue-soft);
+  border-color: var(--rst-blue-soft);
+}
+.filterCheckbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.filterRowLabel { flex: 1; line-height: 1.3; }
+
+.filterRowCount {
+  font-family: var(--f-num);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 7px;
+  border-radius: var(--r-pill);
+  min-width: 22px;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Variante "fond clair" pour les FilterGroup/FilterRow
+   (utilisée dans le FilterSheet mobile bottom-sheet).
+   Les styles de base sont pensés pour la sidebar bleu nuit,
+   on inverse en cascade descendante pour fond blanc.
+   ══════════════════════════════════════════════════════════ */
+.filterBlocksLight {
+  display: flex;
+  flex-direction: column;
+}
+.filterBlocksLight .filterGroup {
+  border-bottom-color: var(--line-1);
+}
+.filterBlocksLight .filterGroupTitle {
+  color: var(--ink-1);
+  font-size: 13px;
+}
+.filterBlocksLight .filterGroupTitle:hover {
+  color: var(--ink-1);
+}
+.filterBlocksLight .filterGroupIcon {
+  color: var(--ink-3);
+}
+.filterBlocksLight .filterChevron {
+  color: var(--ink-4);
+}
+.filterBlocksLight .filterRow {
+  color: var(--ink-2);
+  padding: 10px 6px;
+  min-height: var(--touch-min);
+  font-size: 14px;
+}
+.filterBlocksLight .filterRow:hover {
+  background: var(--bg-tint);
+}
+.filterBlocksLight .filterCheckbox {
+  width: 20px;
+  height: 20px;
+  border-color: var(--line-soft);
+  background: var(--bg-elevated);
+}
+.filterBlocksLight .filterCheckbox:checked {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+}
+.filterBlocksLight .filterRowCount {
+  color: var(--ink-3);
+  background: rgba(11, 15, 25, 0.06);
+}
+
+/* ── Bouton "Filtrer" mobile dans la topbar ────────────── */
+.topbarFilterBtn {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CENTRE — fond blanc qui s'étend de la sidebar jusqu'au bord
+   droit du viewport. Coin arrondi haut-gauche pour la transition
+   avec le sidebar/topbar sombre. Coin haut-droit également arrondi
+   pour la transition avec la topbar (le bord-droit touche le bord
+   du viewport, donc on voit juste un quart de cercle au plafond).
+   Padding-right réservé pour les suggestions flottantes par-dessus.
+   ══════════════════════════════════════════════════════════ */
+.center {
+  position: relative;
+  overflow-y: auto;
+  min-height: 0;
+  /* Padding-right large pour que le contenu ne passe pas sous les
+     suggestions flottantes. Quand suggestions fermées, on remet à
+     une valeur normale via .bodySuggestionsClosed. */
+  padding: 32px calc(var(--sugg-w) + 36px) 60px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.10), transparent 60%),
+    radial-gradient(700px 400px at 95% 22%, rgba(200, 51, 42, 0.05), transparent 65%),
+    var(--bg-canvas);
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
+  box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04) inset;
+  transition: padding-right 460ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Quand les suggestions sont rangées, le centre récupère la pleine
+   largeur sans la zone réservée pour la carte flottante. */
+.bodySuggestionsClosed .center {
+  padding-right: 32px;
+}
+
+/* ── Slot du player ───────────────────────────────────── */
+/* La largeur du slot est bornée par la hauteur disponible × 16/9
+   pour que la vidéo (aspect 16:9) tienne TOUJOURS dans le viewport
+   sans qu'on ait à scroller pour la voir entièrement, même quand
+   sidebar et suggestions sont rétractés et libèrent l'espace. */
+.playerSlot {
+  position: relative;
+  width: 100%;
+  max-width: calc((100vh - var(--topbar-h) - 100px) * 16 / 9);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: #050507;
+  box-shadow:
+    var(--shadow-3),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+  flex-shrink: 0;
+}
+
+/* En mode filtré, le slot passe à hauteur 0 mais son contenu (le wrap)
+   reste affiché car en position: fixed. Important : NE PAS le démonter
+   — sinon YT.Player reset et la vidéo reprend depuis le début. */
+.playerSlotHidden {
+  height: 0;
+  aspect-ratio: auto;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+
+.playerWrap {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition:
+    box-shadow 320ms var(--ease-out),
+    border-radius 320ms var(--ease-out);
+}
+
+/* Styles PiP appliqués DÈS QUE le wrapper passe en position:fixed,
+   peu importe que ce soit en mode filtré ou en mode scroll-out-of-view.
+   z-index 200 pour passer au-dessus de toute capsule du centre. */
+.playerWrapPip {
+  border-radius: var(--r-md);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.42),
+    0 4px 16px rgba(0, 0, 0, 0.22),
+    0 1px 0 0 rgba(255, 255, 255, 0.5) inset;
+  background: #050507;
+  z-index: 200;
+  animation: pipPop 240ms var(--ease-spring);
+}
+
+@keyframes pipPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Mini-bar du player en mode PiP ─────────────────────── */
+.miniBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background:
+    linear-gradient(180deg, rgba(11, 15, 25, 0.92) 0%, rgba(11, 15, 25, 0) 100%);
+  z-index: 3;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 200ms var(--t-fast);
+}
+.miniBar:active {
+  cursor: grabbing;
+}
+.playerSlotHidden .playerWrap:hover .miniBar,
+.playerSlotHidden .playerWrap:focus-within .miniBar,
+.miniBar:focus-within {
+  opacity: 1;
+}
+
+.miniHandle {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.miniTitle {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.miniBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.miniBtn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: scale(1.06);
+}
+
+/* ══════════════════════════════════════════════════════════
+   INFO + PASSAGES + CITATIONS
+   ══════════════════════════════════════════════════════════ */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 4px 0;
+}
+
+.infoSerie {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+.infoTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.15;
+  color: var(--ink-1);
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.infoMeta {
+  font-family: var(--f-text);
+  font-size: 13.5px;
+  color: var(--ink-3);
+  margin: 0 0 14px;
+  letter-spacing: 0.02em;
+}
+
+.infoDesc {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 70ch;
+}
+
+.sectionTitle {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.passages,
+.citations {
+  margin-top: 8px;
+  padding: 18px 20px;
+  background: var(--glass-regular);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+}
+
+.passage,
+.citation { margin-bottom: 18px; }
+.passage:last-child,
+.citation:last-child { margin-bottom: 0; }
+
+.passageRef,
+.citationSource {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+
+.passageText {
+  border-left: 2px solid var(--ink-1);
+  padding-left: 16px;
+  margin: 0;
+  font-family: var(--f-serif);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-1);
+}
+
+.citationText {
+  border-left: 2px solid var(--rst-red);
+  padding-left: 16px;
+  margin: 0;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-1);
+}
+
+/* ══════════════════════════════════════════════════════════
+   PLUS DE PRÉDICATIONS / GRILLE FILTRÉE
+   ══════════════════════════════════════════════════════════ */
+.more {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line-1);
+}
+
+.moreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px 18px;
+}
+
+.filteredGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.filteredHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filteredReset {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--rst-blue);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.filteredReset:hover { color: var(--rst-blue-deep); }
+
+.empty {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-3);
+  margin: 24px 0;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CAPSULE
+   ══════════════════════════════════════════════════════════ */
+.capsule {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  outline: none;
+  border-radius: var(--r-md);
+  transition: transform var(--t-base);
+  -webkit-tap-highlight-color: transparent;
+}
+.capsule:hover,
+.capsule:focus-visible { transform: translateY(-3px); }
+.capsule:focus-visible {
+  outline: 2px solid var(--rst-blue);
+  outline-offset: 6px;
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow:
+    var(--shadow-2),
+    0 1px 0 0 rgba(255, 255, 255, 0.5) inset;
+  transition: box-shadow var(--t-base);
+}
+.capsule:hover .thumb,
+.capsule:focus-visible .thumb {
+  box-shadow:
+    var(--shadow-hover),
+    0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.thumbImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--t-slow), filter var(--t-base);
+  filter: saturate(0.92) brightness(0.95);
+}
+.capsule:hover .thumbImg,
+.capsule:focus-visible .thumbImg {
+  transform: scale(1.04);
+  filter: saturate(1.05) brightness(1);
+}
+
+.thumbOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(11, 15, 25, 0.55) 100%);
+  pointer-events: none;
+}
+
+.typeBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-family: var(--f-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  padding: 4px 9px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-pill);
+  box-shadow: 0 2px 8px rgba(11, 15, 25, 0.18);
+  pointer-events: none;
+}
+
+.duration {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-family: var(--f-num);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #fff;
+  padding: 3px 8px;
+  background: rgba(11, 15, 25, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: var(--ink-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity var(--t-base), transform var(--t-base);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  pointer-events: none;
+}
+.capsule:hover .playBtn,
+.capsule:focus-visible .playBtn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.capsuleBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.capsuleTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  letter-spacing: -0.005em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.capsuleMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-text);
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 4px 0 0;
+  letter-spacing: 0.01em;
+}
+
+.capsulePredicateur { font-weight: 500; color: var(--ink-2); }
+.capsuleDot { color: var(--ink-4); }
+.capsuleDate { font-family: var(--f-num); }
+
+/* ══════════════════════════════════════════════════════════
+   SUGGESTIONS — colonne droite, fixe
+   ══════════════════════════════════════════════════════════ */
+.suggestions {
+  /* Carte flottante POSÉE sur le centre blanc — pas dans le grid.
+     Coins arrondis sur les 4 angles, marges égales pour qu'on voie
+     bien le centre blanc autour.
+     Teinte légèrement bleuâtre (rgba(229, 235, 248, 0.92)) pour se
+     démarquer du canvas blanc-bleuté du centre — sinon les deux
+     surfaces sont indiscernables. */
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: var(--sugg-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: rgba(229, 235, 248, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  color: var(--ink-1);
+  border-radius: var(--center-radius);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 12px 32px rgba(30, 71, 161, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  overflow: hidden;
+  z-index: 30;
+}
+
+.suggestionsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.suggestionsLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.suggestionsToggle {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+  background: rgba(11, 15, 25, 0.06);
+  border: 1px solid var(--line-1);
+  color: var(--ink-2);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.suggestionsToggle:hover {
+  background: rgba(11, 15, 25, 0.12);
+  color: var(--ink-1);
+}
+
+/* Onglet vertical pour rouvrir les suggestions, ancré bord droit.
+   Plus visible : largeur 36px, ombre marquée, indicateur "Suggestions"
+   visible au hover. */
+.suggestionsReopen {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 96px;
+  border-radius: var(--r-md) 0 0 var(--r-md);
+  background: var(--rst-dark-solid);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-right: 0;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow:
+    -4px 0 18px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.suggestionsReopen:hover {
+  color: #fff;
+  background: #0c1130;
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.suggestionsList {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 8px 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Suggestion row ──────────────────────────────────────── */
+.suggRow {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 10px;
+  padding: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--t-fast);
+}
+.suggRow:hover { background: rgba(255, 255, 255, 0.55); }
+
+.suggThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  background: #1a1f33;
+}
+.suggThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggDuration {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-family: var(--f-num);
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  padding: 2px 6px;
+  background: rgba(11, 15, 25, 0.82);
+  border-radius: 4px;
+}
+
+.suggBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.suggTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  letter-spacing: -0.005em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.suggMeta {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 1280px) {
+  .watchPage {
+    --sugg-w: 280px;
+    --sidebar-w: 230px;
+  }
+  .body { grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--sugg-w); }
+}
+
+@media (max-width: 1024px) {
+  .watchPage {
+    --sidebar-w: 220px;
+  }
+  /* Suggestions cachées en tablette pour libérer la vidéo */
+  .body {
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  }
+  .suggestions { display: none; }
+  .topbarBrandLbl { display: none; }
+}
+
+@media (max-width: 820px) {
+  .watchPage {
+    --topbar-h: 52px;
+    /* Fond global bascule canvas : aucun dark ne peut transparaître
+       en bas du scroll quand le contenu est court. La topbar a son
+       propre fond dark via background, donc reste sombre. */
+    background: var(--bg-canvas);
+  }
+  /* Mobile : back · search · filterBtn (brand masqué). 3 colonnes. */
+  .topbar {
+    padding-right: max(10px, var(--safe-right));
+    padding-left: max(10px, var(--safe-left));
+    gap: 8px;
+    grid-template-columns: auto 1fr auto;
+  }
+  .backBtn {
+    padding: 10px;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+  }
+  .backBtn span { display: none; }
+  .topbarBrand { display: none; }
+  .topbarSearch {
+    max-width: none;
+    padding: 10px 14px;
+  }
+  /* L'input passe à 16px via la règle globale dans global.css. */
+
+  /* Bouton "Filtrer" mobile dans la topbar (visible ici, caché sur desktop). */
+  .topbarFilterBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 12px;
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast);
+    flex-shrink: 0;
+  }
+  .topbarFilterBtn:active {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .topbarFilterCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: var(--r-pill);
+    background: var(--rst-blue);
+    color: #fff;
+    font-family: var(--f-num);
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+
+  /* Sidebar filtres masquée — remplacée par le FilterSheet bottom modal. */
+  .sidebar { display: none; }
+
+  /* Le body retombe en une seule colonne (centre seul, plus de sidebar). */
+  .body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .center {
+    padding:
+      16px
+      max(16px, var(--safe-right))
+      max(40px, var(--safe-bottom))
+      max(16px, var(--safe-left));
+  }
+  .moreGrid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Sur téléphone, sidebar minimaliste (juste reset visible) */
+  .sidebar { max-height: 160px; }
+  /* Grille "Plus de prédications" : 2 cards par ligne au lieu d'1.
+     Pattern YouTube-like, plus de densité, scroll plus rapide. */
+  .moreGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 10px;
+  }
+  .capsule { gap: 8px; }
+  .capsuleTitle {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+  .capsuleMeta {
+    font-size: 11px;
+    gap: 4px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+  .capsuleSerie {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+  }
+  /* Le PiP est dimensionné côté JS via getPipSize() qui retourne
+     280×158 sur mobile (voir CultesWatch.tsx). Aucune surcharge CSS
+     nécessaire ici. */
+}
+
+/* Très petit téléphone (≤ 360px) : retour à 1 colonne pour ne pas
+   écraser les thumbnails. */
+@media (max-width: 360px) {
+  .moreGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .capsuleTitle { font-size: 15px; }
+}

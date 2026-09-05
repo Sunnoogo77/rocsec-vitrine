@@ -1,0 +1,191 @@
+/* ============================================================
+   Button — variantes Liquid Glass
+   - video    : pill rouge LIVE / vidéo / YouTube
+   - blue     : pill bleu — CTA primaire (dons, actions)
+   - secondary: pill glass neutre — actions secondaires
+   - line     : rectangle outline — téléchargements
+   - more     : lien inline éditorial
+   Hover : lift scale(1.02). Press : scale(0.97).
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--t-fast),
+    color var(--t-fast),
+    opacity var(--t-fast),
+    box-shadow var(--t-base),
+    transform var(--t-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn:active:not(:disabled) {
+  transform: var(--press-shrink);
+  transition-duration: 120ms;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--rst-blue);
+  outline-offset: 3px;
+}
+
+/* ----------------------------------------------------------
+   video — Pill rouge (LIVE, vidéo, YouTube UNIQUEMENT)
+---------------------------------------------------------- */
+.video {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: var(--rst-red);
+  color: #fff;
+  box-shadow: var(--shadow-red);
+  animation: videoGlow 2.4s ease-in-out infinite;
+}
+
+.video:hover:not(:disabled) {
+  background: var(--rst-red-deep);
+  transform: var(--hover-lift);
+}
+
+@keyframes videoGlow {
+  0%, 100% {
+    box-shadow:
+      0 4px 12px rgba(200, 51, 42, 0.22),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+  }
+  50% {
+    box-shadow:
+      0 6px 22px rgba(200, 51, 42, 0.40),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+  }
+}
+
+/* ----------------------------------------------------------
+   blue — Pill bleu (CTA actions, dons)
+---------------------------------------------------------- */
+.blue {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+
+.blue:hover:not(:disabled) {
+  background: var(--rst-blue-deep);
+  transform: var(--hover-lift);
+  box-shadow:
+    0 6px 18px rgba(30, 71, 161, 0.30),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+/* ----------------------------------------------------------
+   secondary — Pill glass neutre
+---------------------------------------------------------- */
+.secondary {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: var(--glass-thick);
+  color: var(--ink-1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  box-shadow: var(--shadow-2), var(--glass-inset-highlight);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--glass-solid);
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-hover), var(--glass-inset-highlight);
+}
+
+/* Variante pour fond sombre (hero) — verre teinté foncé */
+.secondary.onDark {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.30);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.18),
+    0 1px 0 0 rgba(255, 255, 255, 0.25) inset;
+}
+
+.secondary.onDark:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+/* ----------------------------------------------------------
+   line — Rectangle outline, téléchargements / actions plates
+---------------------------------------------------------- */
+.line {
+  padding: 8px 16px;
+  background: var(--glass-regular);
+  color: var(--ink-1);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  box-shadow: var(--shadow-1);
+}
+
+.line:hover:not(:disabled) {
+  background: var(--glass-solid);
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-2), var(--glass-inset-highlight);
+}
+
+/* ----------------------------------------------------------
+   more — Lien inline "En savoir plus →"
+---------------------------------------------------------- */
+.more {
+  padding: 0;
+  background: transparent;
+  color: var(--ink-1);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 0;
+}
+
+.more:hover:not(:disabled) {
+  color: var(--rst-blue);
+}
+
+/* ----------------------------------------------------------
+   Touch targets confortables sur mobile (~ 44 px WCAG 2.5.5).
+---------------------------------------------------------- */
+@media (max-width: 480px) {
+  .video,
+  .blue,
+  .secondary {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    min-height: 44px;
+  }
+
+  .line {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    min-height: 44px;
+    font-size: 12px;
+  }
+}

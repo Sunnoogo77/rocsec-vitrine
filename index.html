@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Roc Séculaire Tabernacle — Assemblée chrétienne francophone à Vitry-sur-Seine. Attachée au Message de William M. Branham." />
+    <meta name="theme-color" content="#0C0E14" />
+    <title>Roc Séculaire Tabernacle</title>
+    <!--
+      GitHub Pages SPA fallback — script de décodage.
+      Si on arrive ici depuis 404.html avec une query "?/path/encoded",
+      on restaure le chemin réel via history.replaceState avant que
+      React Router ne lise window.location.
+      Adapté de https://github.com/rafgraph/spa-github-pages (MIT).
+    -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location));
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

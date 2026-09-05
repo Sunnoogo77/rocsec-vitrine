@@ -1,0 +1,570 @@
+/* ── HERO ──────────────────────────────────────────────────────── */
+/* Pattern Cultes/Cantiques : hero extended sous le header pour que
+   la sticky subnav reste sur fond sombre généreux. */
+.hero {
+  position: relative;
+  max-width: none;
+  margin: 0;
+  margin-top: -120px;
+  padding: 180px 32px 64px;
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  color: var(--paper);
+}
+
+.heroInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .48);
+}
+
+.heroTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(40px, 5.4vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 14px 0 18px;
+  color: var(--paper);
+  text-wrap: pretty;
+}
+.heroTitle em {
+  font-style: italic;
+  color: rgba(255, 255, 255, .78);
+}
+
+.heroLede {
+  font-family: var(--f-serif);
+  font-size: 19px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .68);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── FILTRES ──────────────────────────────────────────────────── */
+.filters {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 22px 32px;
+  border-bottom: 1px solid rgba(12, 14, 20, .15);
+  background: var(--glass-regular);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  box-shadow: 0 0 0 100vmax rgba(255, 255, 255, 0.62);
+  clip-path: inset(0 -100vmax);
+}
+
+.filtersInner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lbl {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-right: 4px;
+}
+
+.chip {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--ink-2);
+  padding: 6px 14px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  background: var(--glass-thin);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  cursor: pointer;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast);
+}
+.chip:hover {
+  border-color: var(--rst-blue);
+  color: var(--ink-1);
+  background: var(--glass-solid);
+}
+.chipActive {
+  background: var(--rst-blue);
+  color: #fff;
+  border-color: var(--rst-blue);
+  box-shadow: var(--shadow-blue);
+}
+.chipMuted {
+  color: var(--ink-3);
+  border-style: dashed;
+  cursor: pointer;
+}
+
+/* ── ANNONCE PHARE ────────────────────────────────────────────── */
+.featured {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 32px 28px;
+}
+
+.featuredCard {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: box-shadow var(--t-base), transform var(--t-base);
+}
+.featuredCard:hover {
+  box-shadow: var(--shadow-hover), var(--glass-inset-highlight);
+  transform: var(--hover-lift);
+}
+
+/* ── Carousel — navigation entre annonces à venir ───────────── */
+.carouselNav {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.carouselArrow {
+  font-family: var(--f-body);
+  font-size: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(12, 14, 20, .25);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s, background .15s;
+}
+.carouselArrow:hover {
+  border-color: var(--ink);
+  background: rgba(12, 14, 20, .04);
+}
+
+.carouselDots {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.carouselDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(12, 14, 20, .22);
+  transition: background .2s, transform .2s;
+}
+.carouselDotActive {
+  background: var(--ink);
+  transform: scale(1.4);
+}
+
+.carouselCount {
+  font-family: var(--f-num);
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* ── Liste vide ─────────────────────────────────────────────── */
+.empty {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-3);
+  text-align: center;
+  padding: 40px 0;
+}
+
+.featuredImg {
+  position: relative;
+  /* Navy du design system : remplit les bandes latérales/haut-bas
+     quand l'affiche est en portrait. L'image elle-même est toujours
+     visible en entier grâce à `object-fit: contain`. */
+  background: #06091c;
+  min-height: 380px;
+  overflow: hidden;
+}
+
+.featuredImg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Léger padding interne pour que l'affiche ne touche pas les bords */
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.statusFlag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 6px 14px;
+  background: var(--ink);
+  font-weight: 600;
+}
+
+/*
+ * RST token mapping (PRD uses inverted semantics vs RST):
+ * PRD --accent = RED  → RST var(--note)   = #C8332A
+ * PRD --note   = BLUE → RST var(--accent) = #15364B
+ */
+.flagSoon  { background: var(--note); }    /* RED — À VENIR  */
+.flagToday { background: var(--accent); }  /* BLUE — AUJOURD'HUI */
+.flagPast  { background: var(--ink-3); }   /* GREY — PASSÉE  */
+
+.featuredBody {
+  padding: 40px 36px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.featuredEyebrow {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+
+.featuredBody h2 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(30px, 3.4vw, 40px);
+  line-height: 1.05;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.featuredBody h2 em {
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.featuredBody p {
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0 0 24px;
+  max-width: 50ch;
+}
+
+.featuredMeta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(12, 14, 20, .15);
+  border-bottom: 1px solid rgba(12, 14, 20, .15);
+  margin-bottom: 22px;
+}
+
+.featuredMeta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mLbl {
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.mVal {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.moreLine {
+  align-self: flex-start;
+  font-family: var(--f-body);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+}
+
+/* ── CHRONOLOGIE ──────────────────────────────────────────────── */
+.chrono {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 32px 60px;
+}
+
+.chronoMonth { margin-bottom: 48px; }
+.chronoMonth:last-child { margin-bottom: 0; }
+
+.monthHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.monthLbl {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 24px;
+  color: var(--ink);
+  border: 0;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.monthCount {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── CARDS ────────────────────────────────────────────────────── */
+.annCard {
+  display: grid;
+  grid-template-columns: 110px 1fr 130px;
+  gap: 28px;
+  padding: 24px 4px;
+  border-bottom: 1px solid rgba(12, 14, 20, .12);
+  align-items: start;
+  transition: background .15s;
+  text-decoration: none;
+  color: inherit;
+}
+.annCard:hover { background: rgba(12, 14, 20, .02); }
+.annCard:hover h3 { color: var(--note); }
+
+.statePast { opacity: 0.55; }
+
+.stateToday {
+  background: rgba(200, 51, 42, .04); /* rgba of RST --note #C8332A — très léger */
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-left: 2px solid var(--accent); /* BLEU RST */
+  border-bottom-color: rgba(12, 14, 20, .12);
+}
+
+/* ── DATE ─────────────────────────────────────────────────────── */
+.annDate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.dn {
+  font-family: var(--f-num);
+  font-size: 48px;
+  line-height: 1;
+  color: var(--ink);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.dl {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+.stateSoon .dn  { color: var(--ink); }
+.stateToday .dn { color: var(--accent); } /* BLEU RST */
+
+/* ── CORPS ────────────────────────────────────────────────────── */
+.annBody { padding-top: 6px; }
+
+.annType {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.annBody h3 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.annBody p {
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 60ch;
+  /* Tronque à 3 lignes sur la carte de liste : une description longue ne doit
+     pas envahir la carte. Le texte complet reste visible sur la fiche détail. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── TAG D'ÉTAT ───────────────────────────────────────────────── */
+.annState {
+  text-align: right;
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  padding-top: 10px;
+}
+
+.stateSoonTag  { color: var(--note); font-weight: 600; }   /* ROUGE RST */
+
+.stateTodayTag {
+  color: var(--accent); /* BLEU RST */
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  width: 100%;
+}
+.stateTodayTag::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent); /* BLEU RST */
+  animation: ctxLivePulse 1.6s ease-out infinite;
+  flex-shrink: 0;
+}
+
+.statePastTag { color: var(--ink-3); }
+
+@keyframes ctxLivePulse {
+  0%   { box-shadow: 0 0 0 0   rgba(21, 54, 75, .6); } /* rgba de --accent #15364B */
+  70%  { box-shadow: 0 0 0 8px rgba(21, 54, 75,  0); }
+  100% { box-shadow: 0 0 0 0   rgba(21, 54, 75,  0); }
+}
+
+/* ── MOBILE ≤ 820px ───────────────────────────────────────────── */
+@media (max-width: 820px) {
+  .hero {
+    margin-top: -110px;
+    padding: 142px 22px 56px;
+  }
+  .filters { padding: 18px 22px; }
+  .filterGroup { flex-wrap: wrap; }
+
+  .featured    { padding: 32px 22px 22px; }
+  .featuredCard { grid-template-columns: 1fr; }
+  .featuredImg  { min-height: 240px; }
+  .featuredBody { padding: 28px 22px 26px; }
+  .featuredMeta { grid-template-columns: 1fr; gap: 12px; }
+
+  .chrono  { padding: 22px 22px 50px; }
+  .annCard { grid-template-columns: 80px 1fr; gap: 18px; }
+  .dn      { font-size: 38px; }
+
+  .annState {
+    grid-column: 1 / -1;
+    text-align: left;
+    padding-top: 6px;
+  }
+  .stateTodayTag { justify-content: flex-start; }
+
+  .stateToday {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+/* ── MOBILE ≤ 480px (téléphone) ───────────────────────────────── */
+@media (max-width: 480px) {
+  .hero {
+    margin-top: -110px;
+    padding: 134px 16px 40px;
+  }
+  .filters { padding: 14px 16px; }
+
+  .featured    { padding: 24px 16px 18px; }
+  .featuredImg  { min-height: 200px; }
+  .featuredBody { padding: 22px 16px 22px; }
+
+  .chrono   { padding: 18px 16px 40px; }
+  .annCard  { grid-template-columns: 64px 1fr; gap: 14px; padding: 16px 0; }
+  .dn       { font-size: 30px; }
+
+  /* Chips de filtres ≥ 44px sur mobile (iOS HIG) */
+  .chip {
+    min-height: var(--touch-min);
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

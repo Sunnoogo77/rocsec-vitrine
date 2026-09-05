@@ -1,0 +1,18 @@
+/* ============================================================
+   Eyebrow — petit label tracking large, flavour Liquid Glass.
+   ============================================================ */
+
+.eyebrow {
+  display: block;
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.4;
+}
+
+.note {
+  color: var(--rst-red);
+}
