@@ -1,0 +1,67 @@
+/* ============================================================
+   LivePill — pastille LIVE rouge en glass-flavored.
+   Identité RST conservée (rouge en accent), animation calme.
+   ============================================================ */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  background: var(--rst-red);
+  color: #fff;
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: var(--shadow-red);
+  transition:
+    background var(--t-fast),
+    transform var(--t-fast),
+    box-shadow var(--t-fast);
+}
+
+.pill:hover {
+  background: var(--rst-red-deep);
+  transform: var(--hover-lift);
+  box-shadow:
+    0 6px 18px rgba(200, 51, 42, 0.34),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--rst-red);
+  outline-offset: 3px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  flex-shrink: 0;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+
+@media (max-width: 480px) {
+  .pill {
+    padding: 11px 18px;
+    min-height: var(--touch-min);
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,5 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" fill="#0C0E14"/>
+  <ellipse cx="32" cy="32" rx="28" ry="18" fill="none" stroke="#15364B" stroke-width="2.5"/>
+  <text x="32" y="36" text-anchor="middle" font-family="Cinzel, serif" font-weight="600" font-size="16" fill="#15364B" letter-spacing="2">RST</text>
+</svg>

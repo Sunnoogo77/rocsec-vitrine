@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roc Séculaire Tabernacle</title>
+    <!--
+      GitHub Pages SPA fallback — adapté de Rafael Pedicini
+      (https://github.com/rafgraph/spa-github-pages, MIT licence).
+
+      GitHub Pages renvoie ce 404.html pour toute URL qui ne mappe pas
+      à un fichier statique. On encode le chemin demandé dans la query
+      string puis on redirige vers index.html, qui décode et restaure
+      l'URL côté client (voir index.html).
+
+      pathSegmentsToKeep = 1 :
+        - 1 = project page (https://user.github.io/REPO/...)  ← notre cas
+        - 0 = user/org page (https://user.github.io/...)
+    -->
+    <script type="text/javascript">
+      var pathSegmentsToKeep = 1;
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -1,0 +1,348 @@
+/* ============================================================
+   YouTubePlayer — Custom overlay style Apple/iOS
+   Fond noir, controls glass-dark, easing Apple
+   ============================================================ */
+
+.player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #050507;
+  overflow: hidden;
+  font-family: var(--f-text);
+  color: #fff;
+}
+
+.playerHideCursor {
+  cursor: none;
+}
+
+.playerFullscreen {
+  background: #000;
+}
+
+.iframeHost {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.iframeHost iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Couche cliquable plein-écran pour play/pause au tap ── */
+.tapLayer {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* ── Big play button au centre quand pause ───────────────── */
+.bigPlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88px;
+  height: 88px;
+  margin: -44px 0 0 -44px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 6px;
+  cursor: pointer;
+  z-index: 3;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 1px 0 0 rgba(255, 255, 255, 0.25) inset;
+  transition: transform 200ms var(--ease-spring), background 180ms var(--ease);
+  animation: bigPlayIn 320ms var(--ease-spring);
+}
+.bigPlay:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+@keyframes bigPlayIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Overlay controls ────────────────────────────────────── */
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 12px 8px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.40) 50%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+  pointer-events: none;
+}
+.controlsVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Progress bar ────────────────────────────────────────── */
+.progressTrack {
+  position: relative;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 4px;
+  /* Désactive le menu contextuel iOS au long-press */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.progressTrack::before {
+  /* Track de fond */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  transition: height 160ms var(--ease);
+}
+.progressTrack:hover::before {
+  height: 6px;
+}
+
+.progressBuffer {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 0%;
+  background: rgba(255, 255, 255, 0.30);
+  border-radius: 2px;
+  transition: height 160ms var(--ease);
+}
+
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  background: var(--rst-red);
+  border-radius: 2px;
+  transition: height 160ms var(--ease);
+}
+.progressTrack:hover .progressFill,
+.progressTrack:hover .progressBuffer {
+  height: 6px;
+}
+
+.progressHandle {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -6px;
+  background: var(--rst-red);
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 160ms var(--ease), transform 160ms var(--ease);
+  pointer-events: none;
+}
+.progressTrack:hover .progressHandle {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Bar : actions left + right ──────────────────────────── */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 2px;
+  gap: 8px;
+}
+
+.barLeft,
+.barRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-xs);
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.92);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 160ms var(--ease), color 160ms var(--ease);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.iconBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* ── Volume ──────────────────────────────────────────────── */
+.volumeGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.volumeSliderWrap {
+  width: 0;
+  overflow: hidden;
+  transition: width 220ms var(--ease-out);
+  display: flex;
+  align-items: center;
+}
+.volumeGroup:hover .volumeSliderWrap,
+.volumeGroup:focus-within .volumeSliderWrap,
+.volumeGroup:active .volumeSliderWrap {
+  width: 80px;
+  margin-left: 2px;
+  margin-right: 6px;
+}
+
+.volumeSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.volumeSlider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Time ────────────────────────────────────────────────── */
+.time {
+  font-family: var(--f-num);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.86);
+  letter-spacing: 0.02em;
+  margin-left: 6px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeSep {
+  color: rgba(255, 255, 255, 0.44);
+  margin: 0 3px;
+}
+
+/* ── Responsive : touch targets ≥ 44px sur téléphone ────── */
+@media (max-width: 480px) {
+  .bigPlay {
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+  }
+  /* iOS HIG : touch target ≥ 44px. La barre garde son look mais
+     la zone tap est élargie. */
+  .iconBtn {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
+  /* Zone tap du progress bar élargie verticalement (la barre visuelle
+     reste fine, seule la hitbox grandit). */
+  .progressTrack {
+    height: 32px;
+    margin-bottom: 0;
+  }
+  /* Handle visible en permanence sur tactile (pas de hover). */
+  .progressHandle {
+    opacity: 1;
+    transform: scale(1);
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    margin-top: -7px;
+  }
+  /* Volume toujours visible (pas de hover sur tactile). */
+  .volumeSliderWrap {
+    width: 70px;
+    margin-left: 2px;
+    margin-right: 4px;
+  }
+  .volumeSlider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  .volumeSlider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  .time { font-size: 11px; }
+  .controls { padding: 0 8px 6px; }
+}

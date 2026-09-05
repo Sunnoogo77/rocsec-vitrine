@@ -1,0 +1,361 @@
+{
+  "lang": "FR",
+
+  "nav": {
+    "accueil": "Accueil",
+    "nehemie": "Projet Néhémie",
+    "histoire": "Histoire",
+    "genese": "Genèse",
+    "eglise": "L'Église",
+    "live": "LIVE",
+    "liveLabel": "En direct"
+  },
+
+  "eglise": {
+    "nav": {
+      "cette-semaine": "Cette semaine",
+      "cultes": "Cultes",
+      "cantiques": "Cantiques",
+      "annonces": "Annonces",
+      "temoignages": "Témoignages"
+    },
+    "cetteSemaine": {
+      "majLbl": "Mis à jour",
+      "filMessage": "Le fil du message",
+      "galerieTitre": "Images de la semaine",
+      "galerieMeta": "Semaine {{n}} · {{count}} photos",
+      "galerieNote": "grille asymétrique · {{count}} placeholders · l'équipe média remplace après chaque culte",
+      "galeriePlaceholder": "Photo · à fournir",
+      "cantiqueLabel": "Cantique spécial",
+      "temoignageLabel": "Témoignage de la semaine",
+      "annoncesTitre": "Annonces",
+      "annoncesSub": "à venir.",
+      "voirToutes": "Voir toutes les annonces →",
+      "badgeReplay": "REPLAY",
+      "playReplay": "Regarder le replay",
+      "playCantique": "Lire le cantique"
+    },
+    "cultes": {
+      "eyebrow": "Les prédications de l'assemblée",
+      "titreLine1": "« La foi vient de ce qu'on entend,",
+      "titreLine2": "et ce qu'on entend vient de la Parole. »",
+      "ref": "Romains 10 . 17",
+      "lede": "Chaque culte est conservé ici comme un objet d'étude — vidéo, passages bibliques cités, citations du prophète et plan structurel rassemblés dans une seule fiche, pour la lecture, la méditation et le partage.",
+      "branText": "« La Parole prêchée est la semence ; elle ne tombe pas par terre, elle reste, elle germe à son temps. »",
+      "branCite": "— W. M. Branham · THE SPOKEN WORD IS THE ORIGINAL SEED · 62-0318M"
+    },
+    "cantiques": {
+      "eyebrow": "L'hymnaire",
+      "titreLine1": "« Que tout ce qui respire",
+      "titreLine2": "loue l'Éternel ! »",
+      "ref": "Psaumes 150 . 6",
+      "lede": "Les cantiques sont la voix de Roc Séculaire. Ceux du recueil, ceux du Message, ceux qui sont nés ici. Trois familles, un seul hymnaire."
+    },
+    "annonces": {
+      "eyebrow": "Bulletin de l'Église",
+      "titreLine1": "Ce qui vient,",
+      "titreLine2": "ce qui se prépare.",
+      "lede": "Réunions, voyages, sorties, occasions exceptionnelles. Le bulletin recense toutes les annonces — passées, du jour, à venir."
+    },
+    "temoignages": {
+      "eyebrow": "Mur des témoignages",
+      "titreLine1": "Ce que Dieu",
+      "titreLine2": "a fait parmi nous.",
+      "lede": "Pas de notes. Pas d'étoiles. Juste des récits — courts ou longs, anonymes ou nommés. Le témoignage est un récit pastoral, pas une recommandation."
+    }
+  },
+
+  "footer": {
+    "identitePhrase1": "Assemblée chrétienne",
+    "identitePhrase2": "Roc Séculaire Tabernacle.",
+    "localisation": "Localisation",
+    "horaires": "Horaires",
+    "secretariat": "Secrétariat de l'Église",
+    "salle": "Salle 2 : Bacchus",
+    "voirMaps": "Voir sur Google Maps →",
+    "schedule": {
+      "wed": "Mercredi",
+      "sun": "Dimanche",
+      "fri": "Vendredi",
+      "wedTime": "19H00 — 21H00 · Culte",
+      "sunTime": "09H00 — 12H30 · Culte",
+      "friTime": "dès 19H00 · Réunion de prière"
+    },
+    "youtube": "Chaîne YouTube →",
+    "legal": "© {{year}} Roc Séculaire Tabernacle · Vitry-sur-Seine"
+  },
+
+  "actions": {
+    "contribuer": "Contribuer",
+    "decouvrir": "Découvrir l'église",
+    "ecouterMessage": "Écouter le message",
+    "voirReplay": "Voir le replay",
+    "voirAnnonces": "Voir toutes les annonces",
+    "enSavoirPlus": "En savoir plus",
+    "lireRecit": "Lire le récit complet",
+    "partager": "Partager",
+    "telechargerAudio": "Audio MP3",
+    "telechargerVideo": "Vidéo MP4",
+    "telechargerPlan": "Plan en PDF",
+    "tousMessages": "Tous les messages",
+    "telechargerAffiche": "↓ Télécharger l'affiche",
+    "ouvrirGrand": "Ouvrir en grand",
+    "retourAnnonces": "← Retour aux annonces",
+    "retourTemoignages": "← Retour aux témoignages",
+    "retourHymnaire": "← Retour à l'hymnaire",
+    "voirTableau": "Voir le tableau de bord",
+    "decouvrirProjet": "Découvrir le projet →",
+    "annoncePrecedente": "Annonce précédente",
+    "annonceSuivante": "Annonce suivante"
+  },
+
+  "cantiques": {
+    "tous": "Tous",
+    "recueil": "Du recueil",
+    "message": "Du Message",
+    "compose": "Composés ici",
+    "recherche": "Rechercher un cantique",
+    "paroles": "Paroles",
+    "parolesEmpty": "Paroles à renseigner par l'équipe musicale.",
+    "lirePrefixe": "Lire",
+    "toolbar": {
+      "reduire": "A−",
+      "normal": "A",
+      "agrandir": "A+",
+      "pdf": "↓ PDF"
+    }
+  },
+
+  "annonces": {
+    "etat": "État",
+    "type": "Type",
+    "monthCount": "{{count}} annonce",
+    "monthCount_plural": "{{count}} annonces",
+    "empty": "Aucune annonce ne correspond à ces filtres.",
+    "filtres": {
+      "toutes": "Toutes",
+      "aVenir": "À venir",
+      "aujourdhui": "Aujourd'hui",
+      "passees": "Passées"
+    },
+    "types": {
+      "reunion": "Réunion",
+      "voyage": "Voyage",
+      "sortie": "Sortie",
+      "exceptionnelle": "Exceptionnelle"
+    },
+    "statuts": {
+      "a-venir": "À venir",
+      "aujourd-hui": "Aujourd'hui",
+      "passee": "Passée"
+    },
+    "detail": {
+      "quand": "Quand",
+      "ou": "Où",
+      "type": "Type",
+      "compteRenduEyebrow": "Compte-rendu",
+      "compteRenduTitre": "Ce qui s'est passé",
+      "waiting": "L'affiche et le programme détaillé seront publiés prochainement."
+    }
+  },
+
+  "cultes": {
+    "classerPar": "Classer par",
+    "periode": "Période",
+    "rechercher": "Rechercher · titre, verset, mot-clé",
+    "voirPlus": "Voir plus de cultes ↓",
+    "passagesEmpty": "Passages à renseigner.",
+    "citationsEmpty": "Citations à renseigner.",
+    "planEmpty": "Plan à renseigner.",
+    "filtres": {
+      "date": "Date",
+      "serie": "Série",
+      "livre": "Livre biblique"
+    },
+    "periodes": {
+      "2026": "2026",
+      "2025": "2025",
+      "2024": "2024",
+      "archives": "Archives ↓"
+    },
+    "onglets": {
+      "passages": "Passages",
+      "citations": "Citations Branham",
+      "plan": "Plan"
+    }
+  },
+
+  "temoignages": {
+    "partager": "+ Partager mon témoignage",
+    "compteur": "{{count}} témoignages · depuis {{depuis}}",
+    "lireRecit": "Lire le récit complet →",
+    "versetCite": "Verset cité dans ce récit"
+  },
+
+  "nehemie": {
+    "heroEyebrow": "Roc Séculaire Tabernacle",
+    "heroTitleLine1": "Un lieu pour",
+    "heroTitleLine2": "Adorer et Édifier.",
+    "heroSub": "Ensemble, acquérons un lieu de culte permanent pour la gloire de Dieu et le service des générations futures.",
+    "heroQuote": "Le peuple se montra courageux dans le travail.",
+    "heroQuoteRef": "Néhémie 4 . 6",
+
+    "contentEyebrow": "Projet Néhémie",
+    "contentTitle": "Une maison à préparer ensemble.",
+    "objectiveTitle": "Acquérir un lieu de culte permanent pour l'extension de l'œuvre de Dieu.",
+    "progressNote": "Chiffres indicatifs · mise à jour chaque mois",
+    "whyTitle": "Pourquoi ce projet ?",
+    "whyItems": [
+      "Offrir un lieu stable pour l'adoration et l'enseignement",
+      "Accueillir les générations actuelles et futures",
+      "Développer nos activités spirituelles",
+      "Avoir notre propre local accessible à tout moment"
+    ],
+    "buildTitle": "Ce que nous allons bâtir",
+    "buildItems": [
+      "Une salle de culte moderne et fonctionnelle",
+      "Des espaces pour les réunions, rendez-vous et activités",
+      "Un lieu d'accueil chaleureux et accessible à tous"
+    ],
+    "participationTitle": "Comment participer ?",
+    "participationItems": [
+      "Par la prière",
+      "Par le partage du projet",
+      "Par vos dons selon vos moyens"
+    ],
+    "appealTitle": "Notre appel",
+    "appealText": "Comme au temps de Néhémie, chacun a une part à jouer. Unissons-nous, croyons et bâtissons !",
+    "appealVerse": "Ne méprisons aucun jour de petits commencements.",
+    "appealRef": "Zacharie 4:10",
+    "goFurtherTitle": "Ensemble, allons plus loin !",
+    "goFurtherText": "Ce projet n'est pas seulement un bâtiment, c'est une œuvre pour Dieu et un héritage pour nos enfants.",
+    "goFurtherVerse": "Dieu pourvoira !",
+    "goFurtherRef": "Philippiens 4 . 19",
+    "followTitle": "Suivez l'avancement du projet",
+    "followText": "Restez informés chaque mois via nos communications (WhatsApp), réunions, affiches et site web.",
+    "waysTitle": "Moyens de participation",
+    "waysText": "Espèces · Virement bancaire · Don en ligne",
+    "payCashLbl": "Espèces",
+    "payBankLbl": "Virement bancaire",
+    "payOnlineLbl": "Don en ligne",
+    "contactEmail": "roc.seculaire.france@gmail.com",
+    "contactPhone": "+33 7 52 27 85 85",
+
+    "objectif": "Objectif",
+    "collecte": "Collecté",
+    "collectes": "Collectés",
+    "restant": "Restant",
+    "objectifAtteint": "de l'objectif atteint",
+    "miseAJour": "Mise à jour :",
+    "reste": "Reste à collecter",
+
+    "avancementEyebrow": "Avancement du projet",
+    "participerEyebrow": "Participez à cette œuvre",
+    "participer": {
+      "priezLabel": "Priez",
+      "priezDesc": "Soutenez le projet dans la prière.",
+      "partagezLabel": "Partagez",
+      "partagezDesc": "Parlez-en autour de vous.",
+      "donnezLabel": "Donnez",
+      "donnezDesc": "Contribuez selon vos moyens."
+    },
+    "donCta": "♥ Faire un don",
+    "futurEyebrow": "Notre futur lieu de culte",
+    "futurTitre": "Un sanctuaire stable pour servir.",
+    "futurCaption": "Un espace dédié à la présence de Dieu, à l'enseignement de la Parole et à la transformation des vies.",
+
+    "contributions": {
+      "titre": "Choisir votre contribution"
+    },
+    "donner": {
+      "titre": "Comment donner",
+      "virement": "Virement",
+      "cheque": "Chèque",
+      "carte": "Carte",
+      "especes": "Espèces"
+    }
+  },
+
+  "histoire": {
+    "sections": {
+      "commencements": "Les commencements",
+      "enracinement": "L'enracinement",
+      "extension": "L'extension",
+      "aujourd-hui": "Aujourd'hui"
+    }
+  },
+
+  "genese": {
+    "nav": {
+      "sommaire": "Sommaire",
+      "presentation": "Présentation",
+      "naissance": "Naissance",
+      "mission": "Mission",
+      "branham": "W. M. Branham",
+      "actes": "Actes du Saint-Esprit",
+      "offices": "Offices",
+      "services": "Services"
+    }
+  },
+
+  "accueil": {
+    "heroAssemblee": "Assemblée Chrétienne",
+    "heroTitleLine1": "Roc Séculaire",
+    "heroTitleLine2": "Tabernacle",
+    "scheduleEyebrow": "Prochaines réunions",
+    "scheduleTitleLine1": "Nous nous rassemblons",
+    "scheduleTitleLine2": "trois fois par semaine.",
+    "scheduleDays": {
+      "mercredi": "MERCREDI",
+      "dimanche": "DIMANCHE",
+      "vendredi": "VENDREDI"
+    },
+    "scheduleLabels": {
+      "mercrediMain": "Culte",
+      "dimancheMain": "Culte",
+      "vendrediMain": "Réunion de prière",
+      "addrBacchus": "Salle Bacchus, Vitry-sur-Seine",
+      "addrVendredi": "* lieu différent — nous contacter"
+    },
+    "scheduleTime": {
+      "des": "dès {{heure}}",
+      "dimanche": "{{debut}} — 12H30",
+      "interval": "{{debut}} — {{fin}}"
+    },
+    "scheduleFootPin": "Salle 2 : Bacchus",
+    "scheduleFootAddr": "— 64 av. du Groupe Manouchian, 94400 Vitry sur Seine",
+    "scheduleFootMap": "Voir sur la carte →",
+
+    "lastMsgEyebrow": "Dernier message",
+    "lastMsgYouTube": "YOUTUBE · LIVE REPLAY",
+    "lastMsgPlay": "Lire la vidéo",
+    "lastMsgCulteSuffix": "Culte",
+
+    "motDuPasteur": {
+      "eyebrow": "Mot du pasteur",
+      "titre": "Un mot du pasteur.",
+      "cta": "Historique de l'église →"
+    },
+
+    "nehemieBanner": {
+      "eyebrow": "Projet Néhémie",
+      "titreLine1": "Bâtissons",
+      "titreLine2": "ensemble.",
+      "desc": "Acquisition et rénovation d'une salle permanente pour la prière, l'enseignement et le rayonnement de l'assemblée. Chaque don nous rapproche.",
+      "raisedSuffix": "collectés",
+      "goalPrefix": "Objectif",
+      "percentSuffix": "du chemin parcouru",
+      "imgAlt": "Vue du sanctuaire du projet Néhémie"
+    }
+  },
+
+  "accessibility": {
+    "skipToContent": "Aller au contenu principal",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "logoAlt": "Logo Roc Séculaire Tabernacle",
+    "portraitAlt": "Portrait",
+    "langFr": "Passer en français",
+    "langEn": "Switch to English"
+  }
+}

@@ -1,0 +1,749 @@
+/* ══════════════════════════════════════════════════════════════════════
+   CETTE SEMAINE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── HERO ───────────────────────────────────────────────────────────── */
+/* Pattern Cultes/Cantiques : hero étendu sous le header (margin-top
+   négatif + padding-top généreux). Garde la subnav sticky superposée
+   à un fond sombre généreux durant le scroll initial. */
+.hero {
+  position: relative;
+  margin-top: -120px;
+  padding: 180px var(--pad-x) 64px;
+  background:
+    radial-gradient(ellipse 58% 78% at 30% 42%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .08) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  color: var(--paper);
+}
+
+.heroInner {
+  max-width: var(--max-content);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 64px;
+  align-items: center;
+  transition: grid-template-columns .45s cubic-bezier(.2, .7, .25, 1), gap .45s ease;
+}
+
+/* Mode focus vidéo — déclenché au clic sur ▶ */
+.heroInnerExpanded {
+  grid-template-columns: 4fr 1fr;
+  gap: 40px;
+}
+
+/* Panneau vidéo — sombre, radius glass */
+.heroMedia {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--r-md);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, .32),
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: aspect-ratio .45s var(--ease);
+}
+
+.heroMediaExpanded {
+  aspect-ratio: 16 / 9;
+}
+
+/* Miniature YouTube affichée avant le clic */
+.heroThumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.85);
+}
+
+.heroPlay {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.36),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  transition: background var(--t-fast), transform var(--t-fast);
+  z-index: 1;
+}
+.heroPlay:hover {
+  background: #fff;
+  transform: scale(1.06);
+}
+
+.heroPlayIcon {
+  font-size: 20px;
+  color: #111;
+  margin-left: 4px;
+}
+
+.heroBadgeLive {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  background: var(--rst-red);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  border-radius: var(--r-pill);
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #fff;
+  z-index: 2;
+  box-shadow: var(--shadow-red);
+}
+
+/* Badge REPLAY — affiché quand le culte n'est pas en cours */
+.heroBadgeReplay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 6px 14px;
+  background: rgba(11, 15, 25, 0.62);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  border-radius: var(--r-pill);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Iframe YouTube — recouvre tout le panneau hero */
+.heroIframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--r-md);
+  display: block;
+}
+
+.heroBadgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  flex-shrink: 0;
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* Panneau informations */
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heroMeta {
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .48);
+  margin: 0;
+}
+
+.heroTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+  margin: 0;
+}
+
+/* L'em final est en italique — rendu par global h1 em { color: var(--ink-2) }
+   On surcharge pour garder le contraste sur fond sombre */
+.heroTitre em {
+  color: rgba(255, 255, 255, .78);
+  font-style: italic;
+}
+
+.heroDateHeure {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .86);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.heroPredicateur {
+  font-family: var(--f-body);
+  font-size: 14px;
+  color: rgba(255, 255, 255, .58);
+  margin: 0;
+}
+
+.heroVerset {
+  margin: 4px 0 0;
+  padding: 0 0 0 18px;
+  border-left: 2px solid rgba(255, 255, 255, .35);
+}
+
+.heroVersetTexte {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, .72);
+  margin: 0 0 10px;
+}
+
+.heroVersetRef {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .46);
+  font-style: normal;
+}
+
+/* ── FIL DU MESSAGE — carte glass aérée ────────────────────────────── */
+.fil {
+  background: transparent;
+  padding: 72px var(--pad-x);
+}
+
+.filInner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+}
+
+.filLabel {
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+}
+
+.filTexte {
+  font-family: var(--f-serif);
+  font-size: clamp(1rem, 1.35vw, 1.125rem);
+  font-style: italic;
+  line-height: 1.85;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* ── GALERIE ──────────────────────────────────────────────────────────
+   6-col grid :
+   item 1 → grand gauche (cols 1-3, 2 lignes)
+   items 2-3 → droite empilés (cols 4-6, 1 ligne chacun)
+   items 4-6 → rangée basse, 3 colonnes égales
+   ──────────────────────────────────────────────────────────────────── */
+.galerie {
+  background: transparent;
+  padding: 64px var(--pad-x);
+}
+
+.galerieInner {
+  max-width: var(--max-content);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.galerieHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.galerieTitre {
+  font-family: var(--f-serif);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 0;
+}
+
+.galerieMeta {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.galerieGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 210px 210px 175px;
+  gap: 8px;
+}
+
+.galerieGrid > *:nth-child(1) { grid-column: 1 / 4; grid-row: 1 / 3; }
+.galerieGrid > *:nth-child(2) { grid-column: 4 / 7; grid-row: 1; }
+.galerieGrid > *:nth-child(3) { grid-column: 4 / 7; grid-row: 2; }
+.galerieGrid > *:nth-child(4) { grid-column: 1 / 3; grid-row: 3; }
+.galerieGrid > *:nth-child(5) { grid-column: 3 / 5; grid-row: 3; }
+.galerieGrid > *:nth-child(6) { grid-column: 5 / 7; grid-row: 3; }
+
+.galerieItem {
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 4px 14px rgba(11, 15, 25, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.galerieImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-normal);
+}
+.galerieItem:hover .galerieImg {
+  transform: scale(1.03);
+}
+
+.galeriePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galeriePlaceholderLabel {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.galerieNote {
+  font-family: var(--f-body);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* ── CANTIQUE + TÉMOIGNAGE ────────────────────────────────────────────
+   2 colonnes, label avec trait CSS avant le texte
+   ──────────────────────────────────────────────────────────────────── */
+.duo {
+  background: transparent;
+  padding: 64px var(--pad-x);
+}
+
+.duoInner {
+  max-width: var(--max-content);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+}
+
+/* Label : trait horizontal + texte petites capitales */
+.duoLabel {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.duoLabel::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--ink-3);
+  flex-shrink: 0;
+}
+
+/* ─ Cantique ─ */
+.duoCantique {
+  display: flex;
+  flex-direction: column;
+}
+
+.duoCantiqueTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--rst-blue);
+  margin: 0 0 24px;
+  line-height: 1.2;
+}
+
+.duoPlayer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 6px 18px rgba(11, 15, 25, 0.16),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.duoIframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.duoPlayerBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.duoPlayerBtn:hover {
+  background: #fff;
+  transform: scale(1.06);
+}
+
+.duoPlayerIcon {
+  font-size: 15px;
+  color: #111;
+  margin-left: 3px;
+}
+
+.duoCantiqueSoliste {
+  font-family: var(--f-body);
+  font-size: 13px;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.duoCantiqueMeta {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+/* ─ Témoignage ─ */
+.duoTemoignage {
+  display: flex;
+  flex-direction: column;
+}
+
+.duoGuillemet {
+  font-family: var(--f-serif);
+  font-size: 52px;
+  line-height: 1;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.duoTemoignageTexte {
+  font-family: var(--f-serif);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--rst-blue);
+  margin: 0 0 24px;
+}
+
+.duoTemoignageAuteur {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* ── ANNONCES ─────────────────────────────────────────────────────────
+   Fond blanc · 3 colonnes séparées par règles verticales
+   ──────────────────────────────────────────────────────────────────── */
+.annonces {
+  background: transparent;
+  padding: 64px var(--pad-x) 88px;
+}
+
+.annoncesInner {
+  max-width: var(--max-content);
+  margin: 0 auto;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+}
+
+.annoncesHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.annoncesTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(1.875rem, 3vw, 2.75rem);
+  font-weight: 400;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.08;
+}
+
+.annoncesSubtitre {
+  font-family: var(--f-serif);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 2px 0 0;
+  line-height: 1.08;
+}
+
+.annoncesLienAll {
+  font-family: var(--f-text);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--rst-blue);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 6px;
+  transition: opacity var(--t-fast);
+}
+.annoncesLienAll:hover {
+  opacity: 0.75;
+  color: var(--rst-blue-deep);
+}
+
+.annoncesRule {
+  height: 1px;
+  background: var(--line-1);
+}
+
+.annoncesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Chaque colonne : padding haut + padding droit */
+.annonceCol {
+  padding: 32px 48px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Colonnes 2 et 3 : séparateur gauche + padding gauche */
+.annonceCol + .annonceCol {
+  padding-left: 48px;
+  border-left: 1px solid var(--line-soft);
+}
+
+/* Dernière colonne : pas de padding droit */
+.annonceCol:last-child {
+  padding-right: 0;
+}
+
+.annonceDate {
+  font-family: var(--f-text);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+.annonceTitre {
+  font-family: var(--f-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.annonceDesc {
+  font-family: var(--f-body);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-3);
+  margin: 0;
+  /* Tronque à 3 lignes : la description complète reste sur la fiche annonce. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 820px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 820px) {
+  .hero {
+    margin-top: -110px;
+    padding: 142px var(--pad-x-mob) 56px;
+  }
+
+  .heroInner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .heroMedia {
+    aspect-ratio: 16 / 9;
+  }
+
+  .fil {
+    padding: 52px var(--pad-x-mob);
+  }
+
+  .galerie {
+    padding: 52px var(--pad-x-mob);
+  }
+
+  .galerieGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 44vw 28vw 28vw 28vw;
+  }
+  .galerieGrid > *:nth-child(1) { grid-column: 1 / 3; grid-row: 1; }
+  .galerieGrid > *:nth-child(2) { grid-column: 1;     grid-row: 2; }
+  .galerieGrid > *:nth-child(3) { grid-column: 2;     grid-row: 2; }
+  .galerieGrid > *:nth-child(4) { grid-column: 1;     grid-row: 3; }
+  .galerieGrid > *:nth-child(5) { grid-column: 2;     grid-row: 3; }
+  .galerieGrid > *:nth-child(6) { grid-column: 1 / 3; grid-row: 4; }
+
+  .duo {
+    padding: 52px var(--pad-x-mob);
+  }
+
+  .duoInner {
+    grid-template-columns: 1fr;
+    gap: 52px;
+  }
+
+  .annonces {
+    padding: 52px var(--pad-x-mob) 72px;
+  }
+
+  .annoncesHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .annoncesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .annonceCol,
+  .annonceCol + .annonceCol {
+    padding: 24px 0;
+    border-left: none;
+    border-top: 1px solid var(--line-soft);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 480px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .galerieGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, 58vw);
+  }
+  .galerieGrid > *:nth-child(n) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

@@ -1,0 +1,250 @@
+/* ============================================================
+   RST — Design Tokens
+   Branche feat/glass-redesign
+   ------------------------------------------------------------
+   Le système Liquid Glass (iOS 26 / macOS Tahoe) cohabite avec
+   les tokens éditoriaux historiques. Tous les anciens tokens
+   restent disponibles pour ne rien casser dans les CSS Modules
+   existants ; les nouveaux tokens préfixés (--rst-*, --glass-*,
+   --bg-*, --shadow-1..4, --t-*) viennent enrichir le système.
+   Source : design-reference/glass-bundle/RST Liquid Glass Design
+   System/colors_and_type.css.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Cinzel:wght@500;600&family=Bodoni+Moda:wght@400;500&display=swap");
+
+:root {
+  /* ----------------------------------------------------------
+     BRAND — accents identitaires RST
+     Pipettés du logo officiel et alignés au bundle glass.
+  ---------------------------------------------------------- */
+  --rst-red:        #C8332A;
+  --rst-red-deep:   #A6231A;
+  --rst-red-soft:   #E26057;
+  --rst-red-wash:   rgba(200, 51, 42, 0.08);
+
+  --rst-blue:       #1E47A1;
+  --rst-blue-deep:  #15366E;
+  --rst-blue-soft:  #4F73C7;
+  --rst-blue-wash:  rgba(30, 71, 161, 0.08);
+
+  /* Tokens éditoriaux historiques — conservés pour cohabitation */
+  --note:           var(--rst-red);
+  --accent:         var(--rst-blue);
+
+  /* ----------------------------------------------------------
+     FOUNDATION NEUTRE — bluish off-white iOS-style
+  ---------------------------------------------------------- */
+  --bg-canvas:      #F5F7FB;
+  --bg-elevated:    #FFFFFF;
+  --bg-tint:        #EEF1F7;
+  --bg-tint-deep:   #E4E9F2;
+
+  /* Compatibilité historique : --paper et --paper-2 alignés sur
+     le canvas glass pour que les sections existantes basculent
+     naturellement sur fond bluish-off-white. */
+  --paper:          #FFFFFF;
+  --paper-2:        #F0EEE6;
+
+  /* ----------------------------------------------------------
+     INK — ramp neutre froide 5 paliers
+  ---------------------------------------------------------- */
+  --ink-1:          #0B0F19;
+  --ink-2:          #2A2F3D;
+  --ink-3:          #5A6173;
+  --ink-4:          #8A91A3;
+  --ink-5:          #B8BDCC;
+
+  /* Alias historique : --ink reste le noir de référence */
+  --ink:            #0C0E14;
+
+  /* Lines — très subtiles */
+  --line-1:         rgba(11, 15, 25, 0.08);
+  --line-2:         rgba(11, 15, 25, 0.05);
+  --line-soft:      rgba(11, 15, 25, 0.10);
+
+  /* ----------------------------------------------------------
+     LIQUID GLASS — couches translucides empilables
+  ---------------------------------------------------------- */
+  --glass-thin:     rgba(255, 255, 255, 0.45);
+  --glass-regular:  rgba(255, 255, 255, 0.62);
+  --glass-thick:    rgba(255, 255, 255, 0.78);
+  --glass-solid:    rgba(255, 255, 255, 0.92);
+  --glass-blue:     rgba(229, 235, 248, 0.62);
+  --glass-warm:     rgba(252, 248, 245, 0.62);
+  --glass-dark:     rgba(20, 24, 38, 0.55);
+  --glass-dark-thick: rgba(20, 24, 38, 0.78);
+
+  /* Backdrop filter recipe */
+  --glass-blur:        blur(40px) saturate(180%);
+  --glass-blur-strong: blur(60px) saturate(200%);
+  --glass-blur-light:  blur(20px) saturate(160%);
+
+  /* Borders + reflets */
+  --glass-border:           1px solid rgba(255, 255, 255, 0.5);
+  --glass-border-bottom:    rgba(0, 0, 0, 0.05);
+  --glass-border-gradient:  linear-gradient(
+                              to bottom,
+                              rgba(255, 255, 255, 0.55) 0%,
+                              rgba(255, 255, 255, 0.18) 40%,
+                              rgba(0, 0, 0, 0.03) 60%,
+                              rgba(0, 0, 0, 0.06) 100%
+                            );
+  --glass-inset-highlight:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
+
+  /* ----------------------------------------------------------
+     SHADOWS — multi-couches, lévitation
+  ---------------------------------------------------------- */
+  --shadow-1:
+      0 1px 2px rgba(11, 15, 25, 0.04),
+      0 2px 6px rgba(11, 15, 25, 0.04);
+
+  --shadow-2:
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 8px 16px rgba(11, 15, 25, 0.06),
+      0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+
+  --shadow-3:
+      0 1px 1px rgba(11, 15, 25, 0.03),
+      0 4px 8px rgba(11, 15, 25, 0.04),
+      0 16px 32px rgba(11, 15, 25, 0.08),
+      0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+
+  --shadow-4:
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 8px 16px rgba(11, 15, 25, 0.06),
+      0 24px 48px rgba(11, 15, 25, 0.12),
+      0 48px 96px rgba(11, 15, 25, 0.10),
+      0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+
+  --shadow-hover:
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 12px 24px rgba(11, 15, 25, 0.08),
+      0 32px 56px rgba(11, 15, 25, 0.12),
+      0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+
+  --shadow-blue:
+      0 4px 12px rgba(30, 71, 161, 0.18),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+
+  --shadow-red:
+      0 4px 12px rgba(200, 51, 42, 0.22),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+
+  /* Compatibilité historique */
+  --shadow-soft:      var(--shadow-2);
+  --shadow-red-soft:  var(--shadow-red);
+  --shadow-blue-soft: var(--shadow-blue);
+
+  /* ----------------------------------------------------------
+     RADII — généreux, iOS-flavored
+  ---------------------------------------------------------- */
+  --r-xs:    8px;
+  --r-sm:    12px;
+  --r-md:    16px;
+  --r-lg:    20px;
+  --r-xl:    28px;
+  --r-2xl:   36px;
+  --r-pill:  999px;
+
+  /* ----------------------------------------------------------
+     SPACING — 4-based
+  ---------------------------------------------------------- */
+  --space-2:    2px;
+  --space-4:    4px;
+  --space-6:    6px;
+  --space-8:    8px;
+  --space-12:   12px;
+  --space-16:   16px;
+  --space-20:   20px;
+  --space-24:   24px;
+  --space-28:   28px;
+  --space-32:   32px;
+  --space-36:   36px;
+  --space-40:   40px;
+  --space-48:   48px;
+  --space-60:   60px;
+  --space-64:   64px;
+  --space-80:   80px;
+  --space-120:  120px;
+
+  /* ----------------------------------------------------------
+     LAYOUT
+  ---------------------------------------------------------- */
+  --max-width:    1280px;
+  --max-content:  1100px;
+  --max-article:  720px;
+  --pad-x:        32px;
+  --pad-x-mob:    20px;
+  --header-h:     74px;
+
+  /* ----------------------------------------------------------
+     BORDERS
+  ---------------------------------------------------------- */
+  --border-major:  1.5px solid var(--ink);
+  --border-soft:   1px solid var(--line-soft);
+  --border-accent: 2px solid var(--accent);
+  --border-note:   2px solid var(--note);
+
+  /* ----------------------------------------------------------
+     MOTION — easing Apple
+  ---------------------------------------------------------- */
+  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast:       180ms var(--ease);
+  --t-base:       320ms var(--ease);
+  --t-slow:       520ms var(--ease-out);
+
+  /* Compatibilité historique */
+  --transition-fast:   180ms var(--ease);
+  --transition-normal: 320ms var(--ease);
+
+  /* Lift / press */
+  --hover-lift:   scale(1.02);
+  --press-shrink: scale(0.97);
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHIE
+     - --f-display / --f-text : SF Pro fallback Inter — UI, nav,
+       boutons, eyebrows, captions. (Anciennement --f-body.)
+     - --f-serif : Cormorant Garamond — voix éditoriale RST,
+       titres + corps des paragraphes longs.
+     - --f-engrave : Cinzel — wordmark, eyebrow engravés rares.
+     - --f-num : Bodoni Moda — chiffres éditoriaux (collecte,
+       pourcentages, montants, dates).
+  ---------------------------------------------------------- */
+  --f-display:  "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter",
+                system-ui, sans-serif;
+  --f-text:     "SF Pro Text", -apple-system, BlinkMacSystemFont, "Inter",
+                system-ui, sans-serif;
+  --f-serif:    "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --f-engrave:  "Cinzel", "Trajan Pro", serif;
+  --f-num:      "Bodoni Moda", "Didot", "Bodoni 72", serif;
+
+  /* Alias historique */
+  --f-body:     var(--f-text);
+
+  /* Échelle fluide */
+  --t-display:  clamp(48px, 7vw, 88px);
+  --t-h1:       clamp(40px, 5.4vw, 64px);
+  --t-h2:       clamp(30px, 3.8vw, 44px);
+  --t-h3:       clamp(22px, 2.4vw, 28px);
+  --t-h4:       18px;
+  --t-body:     16px;
+  --t-body-sm:  14px;
+  --t-caption:  13px;
+  --t-eyebrow:  11px;
+
+  /* ----------------------------------------------------------
+     MOBILE / iOS — safe-areas (notch + Dynamic Island),
+     touch target minimum Apple HIG, viewport dynamique
+  ---------------------------------------------------------- */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --touch-min:   44px;
+}

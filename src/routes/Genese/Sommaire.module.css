@@ -1,0 +1,382 @@
+/* ══════════════════════════════════════════════════════════════════════
+   GENÈSE — Sommaire / Index (7 piliers + 2 événements)
+   Liquid Glass redesign : sections posées sur le canvas, cartes
+   événements glassées.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* HERO ─────────────────────────────────────────────────────────────── */
+.hero {
+  /* Pattern Cultes/Cantiques : hero étendu sous le header. */
+  position: relative;
+  margin-top: -120px;
+  padding: 180px var(--pad-x) 80px;
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  color: var(--paper);
+}
+
+.heroInner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.heroTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(3.5rem, 7vw, 5.25rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin: 0;
+}
+.heroTitre em {
+  font-style: italic;
+  color: rgba(255, 255, 255, .76);
+}
+
+.heroSubtitre {
+  font-family: var(--f-serif);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .78);
+  margin: 0;
+}
+
+.heroDesc {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .60);
+  margin: 8px auto 0;
+  max-width: 60ch;
+}
+
+/* SECTIONS ─────────────────────────────────────────────────────────── */
+.sectionPiliers,
+.sectionEvenements {
+  background: transparent;
+  padding: 80px var(--pad-x);
+}
+
+.sectionInner {
+  max-width: var(--max-content);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.sectionEyebrow {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+  text-align: center;
+}
+
+.sectionTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink-1);
+  margin: 0;
+  text-align: center;
+}
+
+/* LISTE PILIERS — carte glass posée sur le canvas ──────────────────── */
+.piliersList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0 clamp(8px, 2vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  overflow: hidden;
+}
+
+.pilierItem {
+  border-bottom: 1px solid var(--line-1);
+}
+.pilierItem:last-child {
+  border-bottom: none;
+}
+
+.pilierLink {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+  padding: 32px 0;
+  text-decoration: none;
+  color: inherit;
+  align-items: center;
+  transition:
+    background-color var(--t-fast),
+    transform var(--t-base);
+}
+.pilierLink:hover {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.pilierFigure {
+  width: 240px;
+  aspect-ratio: 4 / 5;
+  background: var(--ink-2);
+  overflow: hidden;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 4px 12px rgba(11, 15, 25, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.pilierImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.3);
+  transition: transform 0.4s var(--ease);
+}
+
+.pilierLink:hover .pilierImg {
+  transform: scale(1.04);
+}
+
+.pilierImgFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0c0e14 0%, #141620 100%);
+}
+
+.pilierImgFallback span {
+  font-family: var(--f-num);
+  font-size: 4rem;
+  color: var(--paper);
+}
+
+.pilierBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 24px;
+}
+
+.pilierNum {
+  font-family: var(--f-engrave);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.pilierTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ink-1);
+  margin: 0;
+}
+.pilierTitre em {
+  font-style: italic;
+  color: var(--rst-blue);
+}
+
+.pilierLede {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.pilierCta {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rst-blue);
+  border-bottom: 1px solid rgba(30, 71, 161, 0.4);
+  padding-bottom: 2px;
+  align-self: flex-start;
+  margin-top: 4px;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.pilierLink:hover .pilierCta {
+  color: var(--rst-blue-deep);
+  border-color: var(--rst-blue);
+}
+
+/* GRILLE ÉVÉNEMENTS — cartes glass interactives ─────────────────────── */
+.evenementsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 16px;
+}
+
+.evenementCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-2), var(--glass-inset-highlight);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform var(--t-base),
+    box-shadow var(--t-base);
+}
+.evenementCard:hover {
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-hover), var(--glass-inset-highlight);
+}
+
+.evenementFigure {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+.evenementImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.2);
+  transition: transform 0.4s var(--ease);
+}
+.evenementCard:hover .evenementImg {
+  transform: scale(1.03);
+}
+
+.evenementBody {
+  padding: 24px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.evenementDate {
+  font-family: var(--f-num);
+  font-size: 14px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.evenementTitre {
+  font-family: var(--f-serif);
+  font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink-1);
+  margin: 0;
+}
+.evenementTitre em {
+  font-style: italic;
+  color: var(--rst-blue);
+}
+
+.evenementLede {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.evenementCta {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rst-blue);
+  border-bottom: 1px solid rgba(30, 71, 161, 0.4);
+  padding-bottom: 2px;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 820px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 820px) {
+  .hero {
+    margin-top: -110px;
+    padding: 142px var(--pad-x-mob) 56px;
+  }
+
+  .heroTitre {
+    font-size: clamp(2.5rem, 9vw, 4rem);
+  }
+
+  .sectionPiliers,
+  .sectionEvenements {
+    padding: 56px var(--pad-x-mob);
+  }
+
+  .piliersList {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 0 16px;
+  }
+
+  .pilierLink {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 24px 0;
+  }
+
+  .pilierFigure {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+  }
+
+  .pilierBody {
+    padding-right: 0;
+  }
+
+  .evenementsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .evenementCard {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.92);
+  }
+}

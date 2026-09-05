@@ -1,0 +1,1854 @@
+/* ============================================================
+   CANTIQUES WATCH — page dédiée à la lecture
+   Layout 2 colonnes dans LES DEUX modes :
+   - Mode CANTIQUE : centre blanc (vidéo + occurrences + autres)
+                     + sidebar droite avec carte PAROLES.
+   - Mode SESSION  : centre blanc (vidéo + meta)
+                     + sidebar droite empilant INDEX (haut)
+                     puis PAROLES (bas, du cantique cliqué).
+   Cohérence visuelle avec CultesWatch (palette glass dark).
+   ============================================================ */
+
+.watchPage {
+  --topbar-h: 56px;
+  --sidebar-w: 460px;
+  --center-radius: 28px;
+  --rst-dark-glass:
+    radial-gradient(ellipse 60% 90% at 0% 0%, rgba(30, 71, 161, 0.18) 0%, transparent 70%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  --rst-dark-solid: #06091c;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* dvh = dynamic viewport : se rétracte quand le clavier mobile
+     apparaît, évitant que les inputs soient cachés. Fallback vh. */
+  height: 100dvh;
+  background: var(--rst-dark-solid);
+  color: var(--ink-1);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOPBAR fixe — bleu nuit, fusionnée avec le pied
+   ══════════════════════════════════════════════════════════ */
+.topbar {
+  height: calc(var(--topbar-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding-right: max(24px, var(--safe-right));
+  padding-left: max(24px, var(--safe-left));
+  background: var(--rst-dark-glass);
+  color: rgba(255, 255, 255, 0.92);
+  z-index: 100;
+}
+
+/* ── Pills famille (gauche) ─────────────────────────────── */
+.familyPills {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.familyPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--f-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.familyPill:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+}
+.familyPillActive {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink-1);
+}
+.familyPillActive:hover {
+  background: #fff;
+  color: var(--ink-1);
+}
+
+/* ── Brand centre ──────────────────────────────────────── */
+.topbarBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: center;
+}
+
+.topbarLogo { display: block; width: 36px; height: auto; }
+
+.topbarBrandLbl {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ── Contrôles droite (prev / next / close) ────────────── */
+.topbarControls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+}
+
+.controlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast),
+              color var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+}
+.controlBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.controlBtn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.controlBtn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.controlClose {
+  background: rgba(200, 51, 42, 0.12);
+  border-color: rgba(200, 51, 42, 0.28);
+  color: #ffd0cc;
+}
+.controlClose:hover:not(:disabled) {
+  background: rgba(200, 51, 42, 0.22);
+  border-color: rgba(200, 51, 42, 0.5);
+  color: #fff;
+}
+
+.controlDivider {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.14);
+  margin: 0 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BROWSE — mini-bibliothèque scopée à une famille
+   Centre seul (sidebar paroles masquée), corner top-right
+   arrondi pour boucler le rouleau blanc.
+   (Les overrides .bodyBrowse / .videoColumnBrowse sont placés
+   après les règles .body / .videoColumn pour gagner la cascade.)
+   ══════════════════════════════════════════════════════════ */
+
+.browseInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.browseHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.browseEyebrow {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+.browseTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.1;
+  color: var(--ink-1);
+  margin: 4px 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.browseHint {
+  font-family: var(--f-text);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  margin: 0;
+  max-width: 720px;
+}
+
+.browseSearchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.browseSearchBar:focus-within {
+  border-color: var(--rst-blue);
+  box-shadow: 0 0 0 3px rgba(30, 71, 161, 0.16);
+}
+
+.browseSearchIcon {
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.browseSearchInput {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 14px 0;
+  font-family: var(--f-text);
+  font-size: 14px;
+  color: var(--ink-1);
+  letter-spacing: 0.01em;
+  min-width: 0;
+}
+.browseSearchInput::placeholder {
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+.browseSearchClear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(11, 15, 25, 0.08);
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast);
+}
+.browseSearchClear:hover {
+  background: rgba(11, 15, 25, 0.16);
+  color: var(--ink-1);
+}
+
+/* ── Bande horizontale de filtres (chips année) ────────── */
+.browseFilters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -8px 0 0;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+
+.browseFiltersLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.browseChips {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.browseChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-1);
+  background: var(--glass-thick);
+  color: var(--ink-2);
+  font-family: var(--f-num);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast),
+              color var(--t-fast), transform var(--t-fast);
+}
+.browseChip:hover {
+  border-color: var(--rst-blue);
+  color: var(--ink-1);
+}
+.browseChipActive {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.browseChipActive:hover {
+  background: var(--rst-blue-deep);
+  border-color: var(--rst-blue-deep);
+  color: #fff;
+}
+
+.browseCount {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: -8px 4px 0;
+}
+
+.browseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px 18px;
+}
+
+.browseCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: transform var(--t-base);
+}
+.browseCard:hover {
+  transform: translateY(-3px);
+}
+.browseCard:hover .browseThumb {
+  box-shadow: var(--shadow-2);
+}
+
+.browseThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow var(--t-base);
+}
+.browseThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.browseThumbEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.browseCardBody {
+  padding: 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.browseCardTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 15.5px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.browseCardMeta {
+  font-family: var(--f-text);
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.browseCardSubMeta {
+  font-family: var(--f-num);
+  font-size: 11px;
+  color: var(--ink-4);
+  margin: 0;
+}
+
+.browseEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 24px;
+  text-align: center;
+}
+.browseEmpty p {
+  margin: 0;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-3);
+  max-width: 420px;
+}
+
+.browseEmptyReset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-1);
+  background: var(--glass-thick);
+  color: var(--ink-2);
+  font-family: var(--f-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.browseEmptyReset:hover {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BODY — grid dynamique
+   ══════════════════════════════════════════════════════════ */
+.body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-w);
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Mode BROWSE : pas de sidebar, le centre prend toute la largeur.
+   Doit venir APRÈS .body pour gagner la cascade (même spécificité). */
+.bodyBrowse {
+  grid-template-columns: minmax(0, 1fr);
+}
+.videoColumnBrowse {
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
+}
+
+/* Mode RECUEIL (watch cantique) : pareil, paroles dominantes dans
+   le centre (vidéo compacte au-dessus), sidebar paroles masquée. */
+.bodyRecueilCantique {
+  grid-template-columns: minmax(0, 1fr);
+}
+.videoColumnRecueilCantique {
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   COLONNE CENTRALE — fond blanc, scrollable
+   ══════════════════════════════════════════════════════════ */
+.videoColumn {
+  overflow-y: auto;
+  min-height: 0;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.10), transparent 60%),
+    radial-gradient(700px 400px at 95% 22%, rgba(200, 51, 42, 0.05), transparent 65%),
+    var(--bg-canvas);
+  border-radius: var(--center-radius) 0 0 0;
+}
+
+.videoColumnInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 32px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Slot du player : largeur bornée pour que la vidéo (16:9) tienne
+   dans la viewport sans scroll vertical pour la voir entière. */
+.playerSlot {
+  position: relative;
+  width: 100%;
+  max-width: calc((100vh - var(--topbar-h) - 200px) * 16 / 9);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: #050507;
+  box-shadow: var(--shadow-3), 0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+  flex-shrink: 0;
+}
+
+/* Mode recueil : le player est secondaire, plus compact (paroles
+   occupent l'écran). On le borne à ~640px. */
+.playerSlotCompact {
+  max-width: 640px;
+}
+
+.noVideo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--f-text);
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}
+
+.noVideoHint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+/* ── Métadonnées sous la vidéo ─────────────────────────── */
+.videoMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 4px 0;
+}
+
+.videoFamille {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+.videoTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.15;
+  color: var(--ink-1);
+  margin: 4px 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.videoSubtitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: var(--f-text);
+  font-size: 13.5px;
+  color: var(--ink-3);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.dot { color: var(--ink-4); }
+
+.sectionTitle {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-1);
+}
+
+/* ── Liste des chants (medley / service de chant) ── */
+.chants { margin-top: 28px; }
+.chantsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chantItem {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line-2, rgba(11,15,25,0.05));
+}
+.chantTime {
+  font-family: var(--f-num, 'Bodoni Moda', serif);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--rst-blue);
+  flex-shrink: 0;
+  min-width: 48px;
+}
+.chantBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chantTitre {
+  font-family: var(--f-serif);
+  font-size: 18px;
+  color: var(--ink-1);
+  line-height: 1.2;
+}
+.chantInterpretes {
+  font-family: var(--f-text);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   LYRICS CARD — paroles dans la sidebar droite
+   Carte transparente qui occupe tout son conteneur et défile
+   en interne (toolbar fixe en haut, body scrollable).
+   ══════════════════════════════════════════════════════════ */
+.lyricsCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Variante "inline" : la carte vit dans le centre blanc (mode
+   recueil cantique), pas dans la sidebar bleutée. On lui redonne
+   un fond glass + bordure, et on libère la hauteur (flux normal). */
+.lyricsCardInline {
+  height: auto;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
+  overflow: visible;
+}
+.lyricsCardInline .lyricsBody {
+  overflow-y: visible;
+  max-height: none;
+}
+
+/* Toolbar (A−/A/A+/PDF) STICKY en haut du LyricsCard inline.
+   Quand l'user scrolle de longues paroles dans la sheet mobile ou
+   dans la zone centrale du recueil cantique, la toolbar reste à
+   portée — plus besoin de remonter pour changer la taille. */
+.lyricsCardInline .lyricsToolbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.96);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  z-index: 2;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+
+.lyricsToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(11, 15, 25, 0.06);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.lyricsLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.lyricsTools {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.lyricsTool {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  padding: 6px 12px;
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.lyricsTool:hover:not(:disabled) {
+  background: rgba(11, 15, 25, 0.06);
+  color: var(--ink-1);
+}
+.lyricsTool:disabled {
+  color: var(--ink-4);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.lyricsToolActive {
+  background: var(--rst-blue);
+  color: #fff;
+}
+.lyricsToolActive:hover {
+  background: var(--rst-blue);
+  color: #fff;
+}
+
+.lyricsDivider {
+  width: 1px;
+  height: 18px;
+  background: rgba(11, 15, 25, 0.12);
+  margin: 0 4px;
+}
+
+.lyricsBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 24px 28px;
+  font-family: var(--f-serif);
+  color: var(--ink-1);
+}
+
+.lyricSm { font-size: 15px; line-height: 1.6; }
+.lyricMd { font-size: 18px; line-height: 1.65; }
+.lyricLg { font-size: 22px; line-height: 1.7; }
+
+.verseBlock {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.verseBlock:last-child { margin-bottom: 0; }
+
+.verseLabel {
+  font-family: var(--f-num);
+  font-weight: 500;
+  color: var(--rst-blue);
+  text-align: right;
+  padding-top: 2px;
+  font-size: 0.8em;
+}
+
+.verseLabelRefrain {
+  color: var(--rst-red);
+  font-style: italic;
+}
+
+.verseBlock p { margin: 0; }
+
+.verseBlockRefrain {
+  padding-left: 14px;
+  border-left: 2px solid var(--rst-red);
+  font-style: italic;
+}
+
+.verseBlockPont {
+  padding-left: 14px;
+  border-left: 2px dashed var(--rst-blue);
+}
+
+.lyricsEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--ink-3);
+  font-size: 16px;
+  padding: 40px 24px;
+}
+.lyricsEmpty p { margin: 0; max-width: 380px; }
+
+/* ── Hint en mode session quand aucun cantique sélectionné ──
+   Occupe tout le .lyricsBlock, message centré, ton très calme. */
+.lyricsHint {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px 28px;
+  text-align: center;
+  color: var(--ink-3);
+  font-family: var(--f-text);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.lyricsHint svg { flex-shrink: 0; color: var(--rst-blue); opacity: 0.7; }
+.lyricsHint p { margin: 0; max-width: 320px; }
+
+/* ══════════════════════════════════════════════════════════
+   SÉLECTEUR D'OCCURRENCES — vu aussi dans
+   ══════════════════════════════════════════════════════════ */
+.occurrences { margin-top: 16px; }
+
+.occList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.occBtn {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  padding: 8px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--t-fast), transform var(--t-fast), background var(--t-fast);
+}
+.occBtn:hover {
+  border-color: var(--rst-blue);
+  transform: translateY(-1px);
+}
+.occBtnActive {
+  border-color: var(--rst-blue);
+  background: rgba(30, 71, 161, 0.08);
+  box-shadow: 0 0 0 2px rgba(30, 71, 161, 0.18);
+}
+
+.occThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  background: #1a1f33;
+}
+.occThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.occTimecode {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-family: var(--f-num);
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  padding: 2px 6px;
+  background: rgba(11, 15, 25, 0.82);
+  border-radius: 4px;
+}
+
+.occBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.occContexte {
+  font-family: var(--f-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.occInterpretes {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.occDate {
+  font-family: var(--f-num);
+  font-size: 11px;
+  color: var(--ink-4);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUTRES CANTIQUES — grille
+   ══════════════════════════════════════════════════════════ */
+.related { margin-top: 16px; }
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px 14px;
+}
+
+.relatedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform var(--t-base);
+}
+.relatedCard:hover { transform: translateY(-2px); }
+
+.relatedThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow: var(--shadow-1);
+}
+.relatedThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.relatedThumbEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.relatedBody {
+  padding: 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.relatedTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.relatedMeta {
+  font-family: var(--f-text);
+  font-size: 11px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SIDEBAR DROITE — surface continue (un seul "rouleau" clair)
+   Pas de marge, pas de cartes flottantes : la surface bleutée
+   claire descend du dessous de la topbar jusqu'au coin bas-droit,
+   miroir de la zone blanche centrale (top-right arrondi pour
+   prolonger l'effet d'angle inversé).
+
+   - .lyricsSidebar  → mode CANTIQUE : paroles uniquement
+   - .sessionSidebar → mode SESSION  : toggle Cantiques/Paroles,
+                       un seul panneau visible à la fois.
+   ══════════════════════════════════════════════════════════ */
+
+.lyricsSidebar,
+.sessionSidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: rgba(229, 235, 248, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  color: var(--ink-1);
+  border-radius: 0 var(--center-radius) 0 0;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+/* ── Segmented toggle Cantiques / Paroles (mode session) ── */
+.sessionToggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 12px 16px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(11, 15, 25, 0.06);
+}
+
+.sessionToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  min-height: var(--touch-min);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  background: var(--bg-elevated);
+  color: var(--ink-2);
+  font-family: var(--f-text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast),
+              border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.sessionToggleBtn:hover {
+  border-color: var(--rst-blue-soft);
+  color: var(--ink-1);
+}
+.sessionToggleBtnActive,
+.sessionToggleBtnActive:hover {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+
+.sessionToggleCount {
+  font-family: var(--f-num);
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(11, 15, 25, 0.06);
+  color: var(--ink-3);
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  min-width: 22px;
+  text-align: center;
+}
+.sessionToggleBtnActive .sessionToggleCount {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.sessionToggleNow {
+  color: var(--rst-red);
+  font-size: 14px;
+  line-height: 1;
+}
+.sessionToggleBtnActive .sessionToggleNow {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.sessionHintLink {
+  background: transparent;
+  border: 0;
+  color: var(--rst-blue);
+  font-family: var(--f-text);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 4px;
+  margin: 0 2px;
+  text-decoration: underline;
+}
+.sessionHintLink:hover {
+  color: var(--rst-blue-deep);
+}
+
+.indexHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(11, 15, 25, 0.06);
+  flex-shrink: 0;
+}
+
+.indexLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.indexCount {
+  font-family: var(--f-num);
+  font-size: 11.5px;
+  font-weight: 500;
+  background: rgba(11, 15, 25, 0.08);
+  color: var(--ink-3);
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  min-width: 26px;
+  text-align: center;
+}
+
+.indexList {
+  list-style: none;
+  margin: 0;
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.indexBtn {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+}
+.indexBtn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(11, 15, 25, 0.08);
+  transform: translateX(2px);
+}
+.indexBtnActive {
+  background: var(--rst-blue);
+  color: #fff;
+  border-color: var(--rst-blue);
+  box-shadow: var(--shadow-blue);
+}
+.indexBtnActive:hover {
+  background: var(--rst-blue-deep);
+  border-color: var(--rst-blue-deep);
+  color: #fff;
+}
+
+.indexNum {
+  font-family: var(--f-num);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-align: center;
+}
+.indexBtnActive .indexNum { color: rgba(255, 255, 255, 0.78); }
+
+.indexBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.indexTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.25;
+  color: inherit;
+}
+
+.indexTime {
+  font-family: var(--f-num);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.indexBtnActive .indexTime { color: rgba(255, 255, 255, 0.7); }
+
+.indexPlay {
+  display: inline-flex;
+  color: var(--ink-3);
+}
+.indexBtnActive .indexPlay { color: #fff; }
+
+.indexEmpty {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-3);
+  text-align: center;
+  padding: 32px 24px;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RECUEIL LAYOUT — table des matières hymnaire pensée pour
+   scaler à 500+ entrées (sélection vidéo + tri + jumper alpha
+   + grille 2 cols).
+   ══════════════════════════════════════════════════════════ */
+.recueilLayout {
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Sélection (cards horizontales, cantiques avec vidéo) ── */
+.recueilSectionLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 12px;
+}
+
+.recueilFeaturedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px 12px;
+}
+
+.recueilFeaturedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: transform var(--t-base);
+}
+.recueilFeaturedCard:hover { transform: translateY(-2px); }
+.recueilFeaturedCard:hover .recueilFeaturedThumb { box-shadow: var(--shadow-2); }
+
+.recueilFeaturedThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow var(--t-base);
+}
+.recueilFeaturedThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recueilFeaturedNum {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-family: var(--f-num);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(11, 15, 25, 0.78);
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+}
+
+.recueilFeaturedTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  padding: 0 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Toolbar (tri + jumper alpha) ── */
+.recueilToolbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+}
+
+.recueilSortGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recueilSortLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.recueilSortBtns {
+  display: inline-flex;
+  background: rgba(11, 15, 25, 0.04);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.recueilSortBtn {
+  font-family: var(--f-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.recueilSortBtn:hover { color: var(--ink-1); }
+.recueilSortBtnActive {
+  background: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.recueilSortBtnActive:hover { color: #fff; }
+
+.recueilLetters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.recueilLetter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: var(--r-xs);
+  background: rgba(30, 71, 161, 0.06);
+  color: var(--rst-blue);
+  font-family: var(--f-num);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.recueilLetter:hover {
+  background: var(--rst-blue);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Liste 2 colonnes (rows compactes) ── */
+.recueilGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
+  overflow: hidden;
+}
+
+.recueilRow {
+  display: grid;
+  grid-template-columns: 44px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line-1);
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: background var(--t-fast);
+  font: inherit;
+}
+/* Pas de border-top sur la première ligne de chaque colonne. */
+.recueilGrid > li:nth-child(1) .recueilRow,
+.recueilGrid > li:nth-child(2) .recueilRow {
+  border-top: 0;
+}
+
+.recueilRow:hover {
+  background: rgba(30, 71, 161, 0.05);
+}
+.recueilRow:hover .recueilArrow {
+  transform: translateX(3px);
+  color: var(--rst-blue);
+}
+
+.recueilNum {
+  font-family: var(--f-num);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rst-blue);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 4px 6px;
+  background: rgba(30, 71, 161, 0.08);
+  border-radius: var(--r-xs);
+}
+
+.recueilBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.recueilTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--ink-1);
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recueilSoliste {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recueilVideoBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(200, 51, 42, 0.10);
+  color: var(--rst-red);
+}
+
+.recueilArrow {
+  color: var(--ink-4);
+  transition: transform var(--t-fast), color var(--t-fast);
+}
+
+/* ── Mode A→Z : groupes par lettre ── */
+.recueilAlphaGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.recueilAlphaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-margin-top: calc(var(--topbar-h) + 16px);
+}
+
+.recueilAlphaHead {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--rst-blue);
+  margin: 0;
+  padding: 0 4px 4px;
+  border-bottom: 1px solid var(--line-soft);
+  letter-spacing: -0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BOUTONS MOBILE (Paroles / Cantiques) — masqués desktop
+   par défaut, affichés via les @media en dessous.
+   Pour cantique watch : un seul bouton "Voir les paroles".
+   Pour session watch : 2 boutons "Cantiques" + "Paroles".
+   Tous ouvrent un FilterSheet (bottom sheet iOS-like).
+   ══════════════════════════════════════════════════════════ */
+.mobileLyricsBtn,
+.mobileSessionActions {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 1440px) {
+  .watchPage { --sidebar-w: 420px; }
+}
+
+@media (max-width: 1280px) {
+  .watchPage { --sidebar-w: 380px; }
+  .videoColumnInner { padding: 28px 28px 60px; }
+}
+
+@media (max-width: 980px) {
+  /* Tablette/mobile : la sidebar (lyrics/session) est désormais
+     COMPLÈTEMENT MASQUÉE. Le contenu paroles + index est accessible
+     via des bottom sheets ouvertes par des boutons inline.
+     SURTOUT : on bascule le fond GLOBAL du .watchPage en bg-canvas
+     pour qu'aucun "dark" ne puisse transparaître nulle part en bas
+     (peu importe la hauteur du contenu). La topbar a son propre fond
+     dark via son background, donc elle reste sombre quand même. */
+  .watchPage {
+    background: var(--bg-canvas);
+  }
+  .body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-canvas);
+  }
+  .videoColumn {
+    overflow-y: visible;
+    min-height: 100%;
+  }
+  .lyricsSidebar,
+  .sessionSidebar {
+    display: none;
+  }
+  .videoColumnInner { padding: 24px 22px 32px; }
+
+  /* Boutons mobile actifs */
+  .mobileLyricsBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 18px;
+    min-height: var(--touch-min);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-soft);
+    background: var(--glass-thick);
+    -webkit-backdrop-filter: var(--glass-blur-light);
+    backdrop-filter: var(--glass-blur-light);
+    color: var(--ink-1);
+    font-family: var(--f-text);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: var(--shadow-1);
+    transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast);
+  }
+  .mobileLyricsBtn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--rst-blue-soft);
+  }
+  .mobileLyricsBtn:active {
+    transform: scale(0.98);
+  }
+  .mobileLyricsBtnIcon {
+    display: inline-flex;
+    color: var(--rst-blue);
+    flex-shrink: 0;
+  }
+  .mobileLyricsBtnArrow {
+    margin-left: auto;
+    color: var(--ink-3);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .mobileLyricsBtnCount {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 8px;
+    background: var(--rst-blue);
+    color: #fff;
+    font-family: var(--f-num);
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: var(--r-pill);
+  }
+  .mobileLyricsBtnDot {
+    margin-left: auto;
+    color: var(--rst-red);
+    font-size: 14px;
+  }
+
+  /* Wrapper pour les 2 boutons session (Cantiques + Paroles) */
+  .mobileSessionActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  /* À l'intérieur du wrapper, les boutons ne sont plus 100% mais 1fr. */
+  .mobileSessionActions .mobileLyricsBtn {
+    width: auto;
+    padding: 12px 14px;
+    gap: 8px;
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 820px) {
+  .watchPage { --topbar-h: 52px; }
+  .topbar { padding: 0 10px; gap: 8px; grid-template-columns: 1fr auto; }
+  .topbarBrand { display: none; }
+  /* Pills : conteneur scrollable horizontalement si ça déborde */
+  .familyPills {
+    overflow-x: auto;
+    min-width: 0;
+    scrollbar-width: none;
+    /* Indicateur subtil de scroll horizontal : dégradé sombre sur le
+       bord droit qui suggère qu'on peut faire défiler. Masqué via
+       mask-image pour rester sous le hairline du conteneur. */
+    -webkit-mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
+  }
+  .familyPills::-webkit-scrollbar { display: none; }
+  .familyPill {
+    padding: 5px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .controlBtn { width: 32px; height: 32px; }
+  .controlDivider { margin: 0 2px; }
+
+  /* Watch (cantique/session) — bottom padding réduit + safe-area */
+  .videoColumnInner {
+    padding: 16px 14px max(20px, var(--safe-bottom));
+    gap: 16px;
+  }
+  .lyricsBody { padding: 20px 16px 24px; }
+  .lyricsToolbar { padding: 10px 14px; }
+
+  .relatedGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px 10px;
+  }
+
+  /* Browse (mini-bibliothèque) */
+  .browseInner { padding: 22px 14px 56px; gap: 20px; }
+  .browseTitle { font-size: 26px; line-height: 1.15; }
+  .browseHint { font-size: 13px; }
+  /* iOS empêche le zoom automatique au focus si font-size ≥ 16px */
+  .browseSearchInput { font-size: 16px; padding: 12px 0; }
+  .browseSearchBar { padding: 0 14px; }
+  .browseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px 12px;
+  }
+  .browseCardTitle { font-size: 14.5px; }
+  .browseCardMeta { font-size: 11.5px; }
+
+  /* Recueil layout : 1 colonne, toolbar empilée */
+  .recueilGrid {
+    grid-template-columns: 1fr;
+  }
+  .recueilGrid > li:nth-child(2) .recueilRow {
+    border-top: 1px solid var(--line-1);
+  }
+  .recueilRow {
+    grid-template-columns: 42px 1fr auto auto;
+    gap: 10px;
+    padding: 11px 14px;
+  }
+  .recueilNum { font-size: 12.5px; padding: 3px 6px; }
+  .recueilTitle { font-size: 15px; }
+  .recueilSoliste { font-size: 11.5px; }
+  .recueilToolbar { padding: 10px 12px; gap: 12px; }
+  .recueilLetters { margin-left: 0; }
+  .recueilLetter { min-width: 26px; height: 26px; font-size: 12px; }
+  .recueilAlphaHead { font-size: 22px; }
+  .recueilFeaturedGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Grilles 2 colonnes sur téléphone portrait — beaucoup plus de
+     densité, on tient 4+ cartes par écran de scroll au lieu d'1-2.
+     Permet aussi de voir "le cantique suivant" en scrollant juste un
+     peu vers le bas, sans devoir remonter en haut pour switcher. */
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 10px;
+  }
+  .occList { grid-template-columns: 1fr; }
+  .lyricsToolbar { flex-direction: column; align-items: stretch; }
+  .lyricsTools { justify-content: flex-end; gap: 6px; }
+  /* Boutons paroles ≥ 44px sur téléphone (norme iOS HIG) */
+  .lyricsTool {
+    min-height: var(--touch-min);
+    padding: 10px 14px;
+  }
+
+  /* Contrôles topbar ≥ 44px */
+  .controlBtn { width: var(--touch-min); height: var(--touch-min); }
+
+  /* Browse (Hymnaire spéciaux / Service de chant) : 2 cards par ligne
+     pour une densité YouTube-like, compact mais lisible. */
+  .browseInner { padding: 18px 12px 48px; gap: 18px; }
+  .browseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 10px;
+  }
+  .browseCardTitle { font-size: 13px; line-height: 1.25; }
+  .browseCardMeta { font-size: 11px; }
+  .browseCardSubMeta { font-size: 10.5px; }
+  .browseHead { gap: 4px; }
+  .browseFilters { gap: 8px; }
+  .browseChip {
+    padding: 8px 13px;
+    font-size: 12.5px;
+    min-height: var(--touch-min);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Search clear ≥ 44px de zone tap */
+  .browseSearchClear {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
+
+  /* Recueil : soliste masqué pour gagner de la place */
+  .recueilRow {
+    grid-template-columns: 40px 1fr auto;
+    padding: 12px;
+    gap: 8px;
+    min-height: var(--touch-min);
+  }
+  .recueilArrow { display: none; }
+  .recueilSoliste { display: none; }
+  .recueilFeaturedGrid { grid-template-columns: repeat(2, 1fr); }
+  .recueilSortBtn { min-height: var(--touch-min); padding: 10px 16px; }
+  .recueilLetter { min-width: var(--touch-min); height: var(--touch-min); }
+}
+
+/* Très petit téléphone (iPhone SE, ≤ 360px) : on revient à 1 colonne
+   pour les browseGrid et relatedGrid, sinon thumbnails trop petits.
+   Recueil featured reste 2 cols (cards minuscules acceptables). */
+@media (max-width: 360px) {
+  .browseGrid,
+  .relatedGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .browseCardTitle { font-size: 14px; }
+}

@@ -1,0 +1,524 @@
+/* ============================================================
+   Header — Liquid Glass sticky panel
+   - Mêmes états que la version éditoriale (onDark / onLight /
+     scrolled / hidden / onProtectedDark) pour ne rien casser dans
+     la logique React.
+   - Surface de verre avec backdrop-blur, hairline subtle, pill
+     nav au hover et à l'état actif.
+   ============================================================ */
+
+.skipLink {
+  position: absolute;
+  top: -100%;
+  left: var(--space-16);
+  z-index: 10001;
+  padding: var(--space-8) var(--space-16);
+  background: var(--rst-blue);
+  color: #fff;
+  font-family: var(--f-text);
+  font-size: 13px;
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-blue);
+  transition: top var(--t-fast);
+}
+.skipLink:focus {
+  top: var(--space-8);
+}
+
+/* ── Base header ─────────────────────────────────────────────────── */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  /* iPhone notch / Dynamic Island : on étend le fond vers le haut
+     via padding-top + on incrémente la hauteur effective pour que la
+     barre ne soit pas coupée. Les sticky subnavs utilisent la même
+     formule pour leur `top` afin de rester collées juste sous. */
+  padding-top: var(--safe-top);
+  height: calc(var(--header-h) + var(--safe-top));
+  transition:
+    transform var(--t-base),
+    background var(--t-base),
+    border-color var(--t-base),
+    backdrop-filter var(--t-base),
+    box-shadow var(--t-base);
+}
+
+/* Auto-hide */
+.hidden {
+  transform: translateY(-100%);
+}
+
+/* ── Sur fond sombre (zone hero) — glass dark prononcé ────────────── */
+.onDark {
+  background: rgba(11, 15, 25, 0.42);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+    0 4px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* Variante "protégée" — header plein opaque sur l'intro genese/eglise.
+   Conserve le bleu sombre uni pour s'adosser parfaitement à la bande
+   hero des sous-pages (pas de transition glass nécessaire). */
+.onProtectedDark {
+  background: #06091c;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.onDark .navLink {
+  color: rgba(255, 255, 255, 0.66);
+}
+.onDark .navLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.10);
+}
+.onDark .active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+}
+.onDark .logoName {
+  color: rgba(255, 255, 255, 0.78);
+}
+.onDark .lang {
+  color: rgba(255, 255, 255, 0.5);
+}
+.onDark .lang:hover {
+  color: #fff;
+}
+.onDark .langActive {
+  color: #fff;
+}
+.onDark .langSep {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+/* ── Sur fond clair (reste du site) ─────────────────────────────── */
+.onLight {
+  background: var(--glass-regular);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  backdrop-filter: var(--glass-blur-strong);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 1px 12px rgba(11, 15, 25, 0.04);
+}
+
+.scrolled.onLight {
+  background: var(--glass-thick);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 4px 18px rgba(11, 15, 25, 0.06);
+}
+
+.onLight .navLink {
+  color: var(--ink-2);
+}
+.onLight .navLink:hover {
+  color: var(--ink-1);
+  background: rgba(255, 255, 255, 0.55);
+}
+.onLight .active {
+  color: var(--ink-1);
+  background: var(--glass-solid);
+  box-shadow:
+    0 1px 2px rgba(11, 15, 25, 0.06),
+    var(--glass-inset-highlight);
+}
+.onLight .logoName {
+  color: var(--ink-2);
+}
+.onLight .lang {
+  color: var(--ink-3);
+}
+.onLight .lang:hover {
+  color: var(--ink-1);
+}
+.onLight .langActive {
+  color: var(--rst-blue);
+}
+.onLight .langSep {
+  color: var(--line-soft);
+}
+
+/* ── Inner layout ────────────────────────────────────────────────── */
+.inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+  gap: var(--space-40);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  text-decoration: none;
+  transform: translateY(-2px);
+  transition: transform var(--t-fast);
+}
+.logo:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.logoImg {
+  display: block;
+  object-fit: contain;
+  width: 72px;
+  height: 44px;
+  filter: brightness(1.42) contrast(1.08);
+}
+
+.logoName {
+  font-family: var(--f-engrave);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  transition: color var(--t-base);
+}
+
+/* Navigation principale — pill nav */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.navLink {
+  font-family: var(--f-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  transition:
+    background var(--t-fast),
+    color var(--t-fast),
+    box-shadow var(--t-fast);
+}
+
+/* Utilitaires droite */
+.utility {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  flex-shrink: 0;
+}
+
+.langToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--t-fast);
+}
+
+.langSep {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ── Bouton burger (mobile uniquement, < 600 px) ─────────────────── */
+.burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin-left: auto;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  transition: background var(--t-fast);
+}
+
+.burgerBar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: background 200ms ease;
+}
+
+.onDark .burger {
+  color: rgba(255, 255, 255, 0.86);
+}
+.onLight .burger {
+  color: var(--ink-1);
+}
+.burger:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.onLight .burger:hover {
+  background: rgba(11, 15, 25, 0.06);
+}
+.burger:hover .burgerBar {
+  background: var(--rst-red);
+}
+.burger:focus-visible {
+  outline: 2px solid var(--rst-blue);
+  outline-offset: 2px;
+}
+
+/* ── Drawer plein écran (mobile) ─────────────────────────────────── */
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.22), transparent 60%),
+    radial-gradient(700px 400px at 92% 100%, rgba(200, 51, 42, 0.14), transparent 60%),
+    #06091c;
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  animation: drawerFadeIn 220ms ease-out;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes drawerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px var(--pad-x-mob);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  height: var(--header-h);
+  flex-shrink: 0;
+}
+
+.drawerLogo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--paper);
+}
+
+.drawerLogoImg {
+  display: block;
+  object-fit: contain;
+  width: 56px;
+  height: 36px;
+  filter: brightness(1.42) contrast(1.08);
+}
+
+.drawerLogoName {
+  font-family: var(--f-engrave);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.drawerClose {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  color: var(--paper);
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.drawerClose:hover {
+  background: rgba(255, 255, 255, 0.20);
+  transform: scale(1.05);
+}
+.drawerClose:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 32px var(--pad-x-mob);
+  gap: 4px;
+}
+
+.drawerLink {
+  font-family: var(--f-serif);
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: none;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: color 180ms ease, padding-left 220ms ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.drawerLink:hover,
+.drawerLink:focus-visible {
+  color: #fff;
+  padding-left: 8px;
+  outline: none;
+}
+.drawerLinkActive {
+  color: var(--rst-red);
+  padding-left: 8px;
+}
+.drawerLinkActive::before {
+  content: '·';
+  color: var(--rst-red);
+  margin-right: 12px;
+  font-size: 1.5em;
+  line-height: 0;
+}
+
+.drawerFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px var(--pad-x-mob) 48px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  flex-shrink: 0;
+}
+
+.drawerLangToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.drawerLang {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  color: rgba(255, 255, 255, 0.50);
+  transition: color 180ms ease;
+}
+.drawerLang:hover {
+  color: #fff;
+}
+.drawerLang:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+.drawerLangActive {
+  color: #fff;
+}
+
+.drawerLangSep {
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+  .inner {
+    gap: var(--space-16);
+    padding-inline: var(--pad-x-mob);
+  }
+
+  .logoName {
+    display: none;
+  }
+
+  .nav {
+    gap: var(--space-4);
+  }
+
+  .navLink {
+    font-size: 12.5px;
+    padding: 6px 12px;
+  }
+
+  /* Sur mobile, on remplace les blurs lourds par des fonds plus
+     opaques pour préserver le frame-rate. */
+  .onLight {
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  .onDark {
+    background: rgba(6, 9, 28, 0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+}
+
+@media (max-width: 600px) {
+  .nav,
+  .utility {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+}
