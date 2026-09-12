@@ -170,7 +170,7 @@ function Topbar({ activeFamille, onPrev, onNext, onClose }: TopbarProps) {
       {/* ── Brand (centre) ── */}
       <div className={styles.topbarBrand}>
         <img
-          src={asset('/logo-rst.png')}
+          src={asset('/logo-rst-white.svg')}
           alt="Roc Séculaire Tabernacle"
           className={styles.topbarLogo}
           width={36}

@@ -79,7 +79,7 @@ export default function Header() {
           {/* Logo officiel */}
           <NavLink to="/" className={styles.logo} aria-label={t('accessibility.logoAlt')}>
             <img
-              src={asset('/logo-rst.png')}
+              src={asset('/logo-rst-white.svg')}
               alt="Roc Séculaire Tabernacle"
               className={styles.logoImg}
               width={72}
@@ -175,7 +175,7 @@ export default function Header() {
                 onClick={() => setMobileOpen(false)}
               >
                 <img
-                  src={asset('/logo-rst.png')}
+                  src={asset('/logo-rst-white.svg')}
                   alt="Roc Séculaire Tabernacle"
                   className={styles.drawerLogoImg}
                   width={56}

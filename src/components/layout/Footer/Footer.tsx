@@ -15,7 +15,7 @@ export default function Footer() {
         {/* Colonne 1 — Identité */}
         <div className={styles.col}>
           <img
-            src={asset('/logo-rst.png')}
+            src={asset('/logo-rst-white.svg')}
             alt={t('accessibility.logoAlt')}
             className={styles.logoImg}
             width={120}

@@ -523,7 +523,7 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
         </button>
 
         <div className={styles.topbarBrand}>
-          <img src={asset('/logo-rst.png')} alt="Roc Séculaire Tabernacle"
+          <img src={asset('/logo-rst-white.svg')} alt="Roc Séculaire Tabernacle"
                className={styles.topbarLogo} width={36} height={23} />
           <span className={styles.topbarBrandLbl}>Bibliothèque des prédications</span>
         </div>
