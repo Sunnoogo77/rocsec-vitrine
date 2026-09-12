@@ -13,7 +13,8 @@ services:
       - key: NODE_VERSION
         value: 22.23.2
       - key: VITE_API_BASE_URL
-        sync: false
+        # La vitrine utilise les endpoints publics, sans cookie de connexion.
+        value: https://rocsec-back.onrender.com/api/v1
       - key: VITE_HCAPTCHA_SITEKEY
         sync: false
     routes:
