@@ -27,7 +27,7 @@
   "src/App.tsx:112:<Route path=\"*\" element={<NotFound />} />",
   "src/components/layout/Footer/Footer.tsx:39:target=\"_blank\"",
   "src/components/layout/Footer/Footer.tsx:78:target=\"_blank\"",
-  "src/components/ui/YouTubePlayer/YouTubePlayer.tsx:169:containerRef.current.innerHTML = '';",
+  "src/components/ui/YouTubePlayer/YouTubePlayer.tsx:274:<a href={watchUrl} target=\"_blank\" rel=\"noopener noreferrer\">Ouvrir sur YouTube</a>",
   "src/routes/Accueil.tsx:180:<iframe",
   "src/routes/Accueil.tsx:292:dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(motDuPasteur.texte_html) }}",
   "src/routes/Eglise/AnnonceDetail.tsx:142:target=\"_blank\"",

@@ -1,7 +1,8 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSermons } from '../../hooks/useSermons';
+import { useScrollDirection } from '../../hooks/useScrollDirection';
 import type { Sermon, TypeCulte } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
 import FilterSheet from '../../components/ui/FilterSheet/FilterSheet';
@@ -178,6 +179,27 @@ export default function Cultes() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: sermons } = useSermons();
+  const { direction, scrollY } = useScrollDirection(80);
+  const topbarsHidden = direction === 'down' && scrollY > 80;
+  const sidebarInnerRef = useRef<HTMLDivElement>(null);
+  const [sidebarGeometry, setSidebarGeometry] = useState({ topbars: 128, height: 0 });
+
+  useEffect(() => {
+    const header = document.querySelector('header[role="banner"]');
+    const subnav = document.querySelector('[data-sticky-subnav]');
+    const sidebar = sidebarInnerRef.current;
+    const measure = () => {
+      const topbars = (header?.getBoundingClientRect().height ?? 0) +
+        (subnav?.getBoundingClientRect().height ?? 0);
+      const height = sidebar?.getBoundingClientRect().height ?? 0;
+      setSidebarGeometry((previous) => previous.topbars === topbars && previous.height === height
+        ? previous : { topbars, height });
+    };
+    const observer = new ResizeObserver(measure);
+    for (const element of [header, subnav, sidebar]) if (element) observer.observe(element);
+    measure();
+    return () => observer.disconnect();
+  }, []);
 
   const [query, setQuery] = useState('');
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>('full');
@@ -361,7 +383,10 @@ export default function Cultes() {
   const sidebarIsRail = sidebarMode === 'rail';
 
   return (
-    <main id="main-content" className={styles.page}>
+    <main id="main-content" className={styles.page} style={{
+      '--rst-topbar-offset': `${topbarsHidden ? 0 : sidebarGeometry.topbars}px`,
+      '--rst-filter-height': `${sidebarGeometry.height}px`,
+    } as CSSProperties}>
 
       {/* HERO glass dark */}
       <section data-page-hero className={styles.hero} aria-label={t('eglise.cultes.eyebrow')}>
@@ -463,7 +488,7 @@ export default function Cultes() {
       </section>
 
       {/* Board : sidebar + grille */}
-      <section className={[
+      <section aria-label="Catalogue des prédications" className={[
         styles.board,
         sidebarIsRail ? styles.boardSidebarRail : '',
       ].join(' ')}>
@@ -472,7 +497,7 @@ export default function Cultes() {
           className={[styles.sidebar, sidebarIsRail ? styles.sidebarRail : ''].join(' ')}
           aria-label="Filtres"
         >
-          <div className={styles.sidebarInner}>
+          <div ref={sidebarInnerRef} className={styles.sidebarInner}>
 
             <div className={styles.sidebarHead}>
               {!sidebarIsRail && <span className={styles.sidebarLbl}>Filtres</span>}

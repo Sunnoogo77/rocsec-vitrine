@@ -32,3 +32,17 @@ Les instructions complètes Render, comptes, domaines, sauvegardes et retour arr
 Le fichier `render.yaml` crée uniquement le Static Site de production depuis `main`, avec déploiements manuels (`autoDeployTrigger: off`) pendant le blocage GitHub Actions. Build : `node scripts/render-build.mjs` ; publication : `dist` ; aucune Start Command. Définir `SKIP_INSTALL_DEPS=true` : le script installe lui-même les dépendances de build verrouillées.
 
 Les instructions actuelles pour les trois services, les DNS OVH, Neon, R2 et le premier administrateur sont dans le dépôt backend privé : [guide de déploiement](https://github.com/Sunnoogo77/rocsec-back/blob/main/docs/DEPLOIEMENT.md) et [budget](https://github.com/Sunnoogo77/rocsec-back/blob/main/docs/BUDGET-HEBERGEMENT.md).
+
+## Correction du lecteur YouTube
+
+Pour le Static Site déjà configuré manuellement dans Render :
+
+1. Ouvrir **rocsec-vitrine → Headers → Content-Security-Policy** (Request Path `/*`).
+2. Remplacer sa valeur par l’unique ligne de [security/render-csp.txt](security/render-csp.txt), puis **Save Changes**. Cette valeur correspond à `render.yaml` et autorise les scripts officiels du lecteur YouTube.
+3. **Manual Deploy → Deploy latest commit** depuis `main`, puis recharger la prédication.
+
+Les autres en-têtes et la règle de réécriture restent ceux de `render.yaml`. Modifier ce fichier dans Git ne met pas à jour un service Render créé manuellement.
+
+Le lecteur conserve les commandes natives YouTube, accessibles aussi pendant les annonces. Une iframe reste disponible si l’API JavaScript échoue ; les timecodes de début/fin restent dans son URL, mais la synchronisation des paroles et l’enchaînement automatique nécessitent le chargement de cette API. En cas d’erreur, utiliser **Réessayer** ou **Ouvrir sur YouTube**. YouTube gère les publicités : le backend ne les supprime pas ([aide officielle](https://support.google.com/youtube/answer/132596?hl=fr)).
+
+Les tests navigateur utilisent maintenant le build de production et sa CSP, avec les réponses de l’API du site et du lecteur simulées. Ils vérifient notamment les clics dans l’iframe, le mini-lecteur, les erreurs et les timecodes des cantiques. `npm run preview` applique la CSP définie dans `render.yaml`.

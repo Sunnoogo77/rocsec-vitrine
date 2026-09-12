@@ -526,6 +526,7 @@
 /* Slot du player : largeur bornée pour que la vidéo (16:9) tienne
    dans la viewport sans scroll vertical pour la voir entière. */
 .playerSlot {
+  min-height: 200px;
   position: relative;
   width: 100%;
   max-width: calc((100vh - var(--topbar-h) - 200px) * 16 / 9);
@@ -542,6 +543,11 @@
    occupent l'écran). On le borne à ~640px. */
 .playerSlotCompact {
   max-width: 640px;
+}
+
+.playerSlot:has([data-player-status='limited']),
+.playerSlot:has([data-player-status='error']) {
+  min-height: 364px;
 }
 
 .noVideo {

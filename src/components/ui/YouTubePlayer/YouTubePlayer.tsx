@@ -1,56 +1,84 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { youtubeId } from '../../../utils/youtube';
 import styles from './YouTubePlayer.module.css';
 
-/* ============================================================
-   YouTubePlayer — IFrame Player API + custom overlay controls
-   ------------------------------------------------------------
-   - Charge dynamiquement l'API YouTube IFrame une seule fois
-   - Encapsule un YT.Player et expose un ref impératif léger
-     pour permettre à un parent (mini-bar PiP par ex.) de
-     déclencher play/pause sans dupliquer la logique
-   - Cache les contrôles natifs (controls=0) et superpose les
-     siens : barre de progression, play/pause, volume,
-     fullscreen, time
-   - Auto-hide des contrôles après 2.4s d'inactivité en lecture
-   - Raccourcis clavier : Space, ←/→, ↑/↓, M, F
-   ============================================================ */
+interface YouTubeAPIPlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  getPlayerState: () => number;
+  getCurrentTime: () => number;
+  destroy: () => void;
+}
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+interface YouTubeEvent {
+  target: YouTubeAPIPlayer;
+  data: number;
+}
+
+interface YouTubeAPI {
+  Player: new (host: HTMLIFrameElement, options: {
+    events: {
+      onReady: (event: YouTubeEvent) => void;
+      onStateChange: (event: YouTubeEvent) => void;
+      onError: (event: YouTubeEvent) => void;
+    };
+  }) => YouTubeAPIPlayer;
+}
+
 declare global {
   interface Window {
-    YT?: any;
+    YT?: YouTubeAPI;
     onYouTubeIframeAPIReady?: () => void;
   }
 }
 
-let apiPromise: Promise<void> | null = null;
+let apiPromise: Promise<YouTubeAPI> | null = null;
 
-function loadYouTubeAPI(): Promise<void> {
+/** Shared API loading is optional: the native iframe already works without it. */
+function loadYouTubeAPI(): Promise<YouTubeAPI> {
+  if (window.YT?.Player) return Promise.resolve(window.YT);
   if (apiPromise) return apiPromise;
-  apiPromise = new Promise<void>((resolve) => {
-    if (typeof window === 'undefined') return resolve();
-    if (window.YT && window.YT.Player) return resolve();
 
+  const pending = new Promise<YouTubeAPI>((resolve, reject) => {
     const previous = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      previous?.();
-      resolve();
+    const script = document.createElement('script');
+    let settled = false;
+    let timeout: number;
+
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      script.removeEventListener('error', failed);
+      if (window.onYouTubeIframeAPIReady === ready) {
+        window.onYouTubeIframeAPIReady = previous;
+      }
+      if (error || !window.YT?.Player) {
+        script.remove();
+        reject(error ?? new Error('YouTube API unavailable'));
+      } else {
+        resolve(window.YT);
+      }
+    };
+    const failed = () => finish(new Error('YouTube API could not load'));
+    const ready = () => {
+      try { previous?.(); } catch { /* Another integration must not block this player. */ }
+      finish();
     };
 
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    tag.async = true;
-    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = ready;
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    script.addEventListener('error', failed);
+    timeout = window.setTimeout(failed, 12_000);
+    document.head.appendChild(script);
   });
-  return apiPromise;
+  apiPromise = pending;
+  // Handle the shared rejection even when every subscribing player unmounts.
+  void pending.catch(() => {
+    if (apiPromise === pending) apiPromise = null;
+  });
+  return pending;
 }
 
 export interface YouTubePlayerHandle {
@@ -62,502 +90,191 @@ export interface YouTubePlayerHandle {
 
 interface YouTubePlayerProps {
   videoUrl: string | undefined;
-  /** Réinitialise le player quand cette clé change (ex. on switch de sermon) */
   videoKey?: string;
   autoplay?: boolean;
-  /** Notifie le parent de tout changement d'état lecture/pause */
   onPlayingChange?: (playing: boolean) => void;
-  /** Appelé quand la vidéo arrive à son terme — utile pour enchainer */
   onEnded?: () => void;
-  /** Désactive les raccourcis clavier (utile si concurrent avec d'autres handlers) */
   disableKeyboard?: boolean;
-  /** Démarre la lecture à cette seconde (deep-link YouTube). Utile
-   *  pour pointer un cantique précis dans une longue session. */
   startSec?: number;
-  /** Arrête la lecture à cette seconde. La vidéo n'est pas tronquée
-   *  côté YouTube — c'est le player qui appelle pause() une fois
-   *  l'instant atteint. */
   endSec?: number;
-  /** Notifie le parent du temps de lecture courant (en secondes), pollé
-   *  à ~4 Hz. Utile pour synchroniser un index/paroles sur le timecode
-   *  (ex. SessionView : sélectionne automatiquement le cantique en cours). */
   onTimeUpdate?: (currentSec: number) => void;
+  onNoticeChange?: (visible: boolean) => void;
 }
 
-function formatTime(seconds: number): string {
-  if (!isFinite(seconds) || seconds < 0) return '0:00';
-  const total = Math.floor(seconds);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  if (h > 0) {
-    return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  }
-  return `${m}:${String(s).padStart(2, '0')}`;
+type PlayerStatus = 'loading' | 'ready' | 'limited' | 'error';
+
+function embedError(code: number): string {
+  if (code === 100) return 'Cette vidéo a été supprimée ou est privée.';
+  if (code === 101 || code === 150) return 'Cette vidéo ne peut pas être lue sur ce site.';
+  if (code === 153) return 'YouTube ne parvient pas à autoriser la lecture sur ce site.';
+  return 'La vidéo ne peut pas être chargée pour le moment.';
 }
 
 const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
-  function YouTubePlayer(
-    {
-      videoUrl,
-      videoKey,
-      autoplay = true,
-      onPlayingChange,
-      onEnded,
-      disableKeyboard = false,
-      startSec,
-      endSec,
-      onTimeUpdate,
-    },
-    ref,
-  ) {
+  function YouTubePlayer({
+    videoUrl, videoKey, autoplay = true, onPlayingChange, onEnded,
+    disableKeyboard = false, startSec, endSec, onTimeUpdate, onNoticeChange,
+  }, ref) {
     const id = youtubeId(videoUrl);
+    const start = typeof startSec === 'number' && Number.isFinite(startSec)
+      ? Math.max(0, Math.floor(startSec)) : 0;
+    const end = typeof endSec === 'number' && Number.isFinite(endSec) && Math.floor(endSec) > start
+      ? Math.floor(endSec) : undefined;
     const containerRef = useRef<HTMLDivElement>(null);
-    const playerRef = useRef<any>(null);
+    const playerRef = useRef<YouTubeAPIPlayer | null>(null);
+    const playingRef = useRef(false);
+    const callbacks = useRef({ onPlayingChange, onEnded, onTimeUpdate });
+    const [status, setStatus] = useState<PlayerStatus>('loading');
+    const [error, setError] = useState('');
+    const [attempt, setAttempt] = useState(0);
 
-    const [ready, setReady] = useState(false);
-    const [playing, setPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [volume, setVolume] = useState(80);
-    const [muted, setMuted] = useState(false);
-    const [isFullscreen, setIsFullscreen] = useState(false);
-    const [showControls, setShowControls] = useState(true);
-    const [scrubTime, setScrubTime] = useState<number | null>(null);
+    useEffect(() => {
+      onNoticeChange?.(Boolean(id) && (status === 'limited' || status === 'error'));
+    }, [id, status, onNoticeChange]);
 
-    const hideTimerRef = useRef<number | null>(null);
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+      callbacks.current = { onPlayingChange, onEnded, onTimeUpdate };
+    }, [onPlayingChange, onEnded, onTimeUpdate]);
 
-    /* Refs vers les callbacks pour garantir qu'on lit toujours la dernière
-       version dans les events YT.Player (le useEffect d'init n'a en deps
-       que [id, videoKey] pour ne pas réinstancier le player à chaque
-       changement de prop). */
-    const onPlayingChangeRef = useRef(onPlayingChange);
-    const onEndedRef = useRef(onEnded);
-    const onTimeUpdateRef = useRef(onTimeUpdate);
-    useEffect(() => { onPlayingChangeRef.current = onPlayingChange; }, [onPlayingChange]);
-    useEffect(() => { onEndedRef.current = onEnded; }, [onEnded]);
-    useEffect(() => { onTimeUpdateRef.current = onTimeUpdate; }, [onTimeUpdate]);
-
-    const setPlayingState = useCallback((next: boolean) => {
-      setPlaying(next);
-      onPlayingChangeRef.current?.(next);
+    const updatePlaying = useCallback((next: boolean) => {
+      if (playingRef.current !== next) {
+        playingRef.current = next;
+        callbacks.current.onPlayingChange?.(next);
+      }
     }, []);
 
-    /* ── Init / re-init player quand l'id vidéo change ───── */
+    useImperativeHandle(ref, () => ({
+      play: () => { try { playerRef.current?.playVideo(); } catch { /* Native controls remain available. */ } },
+      pause: () => { try { playerRef.current?.pauseVideo(); } catch { /* Native controls remain available. */ } },
+      toggle: () => {
+        const player = playerRef.current;
+        if (!player) return;
+        try {
+          if (player.getPlayerState() === 1) player.pauseVideo();
+          else player.playVideo();
+        } catch { /* Native controls remain available. */ }
+      },
+      isPlaying: () => playingRef.current,
+    }), []);
+
     useEffect(() => {
-      if (!id || !containerRef.current) return;
-
+      const container = containerRef.current;
+      if (!id || !container) return;
       let cancelled = false;
-      setReady(false);
-      setPlaying(false);
-      setCurrentTime(0);
-      setDuration(0);
+      let player: YouTubeAPIPlayer | null = null;
+      let poll: number | undefined;
+      let ended = false;
+      const startPolling = (target: YouTubeAPIPlayer) => {
+        if (poll !== undefined) window.clearInterval(poll);
+        poll = window.setInterval(() => {
+          if (cancelled) return;
+          try {
+            const current = target.getCurrentTime();
+            if (Number.isFinite(current) && current >= 0) callbacks.current.onTimeUpdate?.(current);
+          } catch { /* A detached or unavailable player cannot report its time. */ }
+        }, 250);
+      };
+      setStatus('loading');
+      setError('');
+      updatePlaying(false);
 
-      loadYouTubeAPI().then(() => {
-        if (cancelled || !containerRef.current) return;
+      // Creating this iframe before requesting the JS API avoids a blank host
+      // if a blocker, an old CSP or a network failure prevents that API loading.
+      const iframe = document.createElement('iframe');
+      const params = new URLSearchParams({
+        enablejsapi: '1', origin: window.location.origin, controls: '1', fs: '1',
+        playsinline: '1', rel: '0', autoplay: autoplay ? '1' : '0',
+        disablekb: disableKeyboard ? '1' : '0', start: String(start),
+      });
+      if (end !== undefined) params.set('end', String(end));
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`;
+      iframe.title = 'Lecteur vidéo YouTube';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      container.replaceChildren(iframe);
 
-        // Détruit le player précédent s'il existe.
-        if (playerRef.current) {
-          try { playerRef.current.destroy(); } catch { /* noop */ }
-          playerRef.current = null;
-        }
+      const unavailable = () => {
+        if (!cancelled) setStatus((current) => current === 'error' ? current : 'limited');
+      };
+      const readyTimeout = window.setTimeout(unavailable, 15_000);
+      const iframeFailed = () => {
+        if (cancelled) return;
+        window.clearTimeout(readyTimeout);
+        setError('La vidéo ne peut pas être chargée pour le moment.');
+        setStatus('error');
+      };
+      iframe.addEventListener('error', iframeFailed);
 
-        // Recrée un host vide (YT remplace l'élément cible par une iframe,
-        // donc il faut qu'il soit vide à chaque init).
-        const host = document.createElement('div');
-        containerRef.current.innerHTML = '';
-        containerRef.current.appendChild(host);
-
-        playerRef.current = new window.YT.Player(host, {
-          videoId: id,
-          playerVars: {
-            controls: 0,
-            modestbranding: 1,
-            rel: 0,
-            iv_load_policy: 3,
-            playsinline: 1,
-            fs: 0,
-            disablekb: 1,
-            autoplay: autoplay ? 1 : 0,
-            /* Deep-link YouTube : start = secondes depuis le début ;
-               end = stop natif YouTube (en plus du watcher JS). */
-            ...(typeof startSec === 'number' ? { start: Math.max(0, Math.floor(startSec)) } : {}),
-            ...(typeof endSec === 'number'   ? { end:   Math.max(0, Math.floor(endSec))   } : {}),
-          },
+      void loadYouTubeAPI().then((api) => {
+        if (cancelled) return;
+        // Attach to the existing native iframe; do not replace it with an empty host.
+        player = new api.Player(iframe, {
           events: {
-            onReady: (e: any) => {
+            onReady: (event) => {
               if (cancelled) return;
-              setReady(true);
-              setDuration(e.target.getDuration() ?? 0);
-              setVolume(e.target.getVolume() ?? 80);
-              setMuted(e.target.isMuted?.() ?? false);
-              if (autoplay) {
-                try { e.target.playVideo(); } catch { /* noop */ }
+              window.clearTimeout(readyTimeout);
+              playerRef.current = event.target;
+              setStatus((current) => current === 'error' ? current : 'ready');
+              startPolling(event.target);
+            },
+            onStateChange: (event) => {
+              if (cancelled) return;
+              updatePlaying(event.data === 1);
+              if (event.data === 1) {
+                startPolling(event.target);
+                window.clearTimeout(readyTimeout);
+                setStatus('ready');
+                setError('');
+                ended = false;
+              }
+              if (event.data === 0 && !ended) {
+                ended = true;
+                callbacks.current.onEnded?.();
               }
             },
-            onStateChange: (e: any) => {
+            onError: (event) => {
               if (cancelled) return;
-              const PS = window.YT.PlayerState;
-              if (e.data === PS.PLAYING) setPlayingState(true);
-              else if (e.data === PS.PAUSED || e.data === PS.ENDED) setPlayingState(false);
-              if (e.data === PS.ENDED) onEndedRef.current?.();
-
-              // La durée n'est connue qu'une fois la lecture engagée parfois.
-              const d = e.target.getDuration?.();
-              if (d && d !== duration) setDuration(d);
+              window.clearTimeout(readyTimeout);
+              if (poll !== undefined) window.clearInterval(poll);
+              updatePlaying(false);
+              setError(embedError(event.data));
+              setStatus('error');
             },
           },
         });
+      }).catch(() => {
+        window.clearTimeout(readyTimeout);
+        unavailable();
       });
 
       return () => {
         cancelled = true;
-        if (playerRef.current) {
-          try { playerRef.current.destroy(); } catch { /* noop */ }
-          playerRef.current = null;
-        }
+        window.clearTimeout(readyTimeout);
+        if (poll !== undefined) window.clearInterval(poll);
+        iframe.removeEventListener('error', iframeFailed);
+        playerRef.current = null;
+        try { player?.destroy(); } catch { /* The iframe may already have been removed. */ }
+        container.replaceChildren();
+        updatePlaying(false);
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, videoKey]);
+    }, [id, videoKey, autoplay, disableKeyboard, start, end, attempt, updatePlaying]);
 
-    /* ── Polling currentTime à 4 Hz pendant la lecture ───── */
-    useEffect(() => {
-      if (!ready) return;
-      const interval = window.setInterval(() => {
-        const p = playerRef.current;
-        if (!p || !p.getCurrentTime) return;
-        const t = p.getCurrentTime();
-        if (typeof t === 'number') {
-          setCurrentTime(t);
-          onTimeUpdateRef.current?.(t);
-          /* Pause automatique quand on atteint endSec (en plus du
-             paramètre `end` de l'IFrame API qui est parfois imprécis). */
-          if (typeof endSec === 'number' && t >= endSec) {
-            try { p.pauseVideo(); } catch { /* noop */ }
-          }
-        }
-      }, 250);
-      return () => window.clearInterval(interval);
-    }, [ready, endSec]);
+    if (!id) return <div className={styles.player}><p className={styles.empty}>Vidéo indisponible.</p></div>;
 
-    /* ── Auto-hide des contrôles après inactivité ───────── */
-    const showControlsTemporarily = useCallback(() => {
-      setShowControls(true);
-      if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
-      if (playing) {
-        hideTimerRef.current = window.setTimeout(() => setShowControls(false), 2400);
-      }
-    }, [playing]);
-
-    useEffect(() => {
-      if (!playing) {
-        setShowControls(true);
-        return;
-      }
-      hideTimerRef.current = window.setTimeout(() => setShowControls(false), 2400);
-      return () => {
-        if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
-      };
-    }, [playing]);
-
-    /* ── Listen fullscreen change ─────────────────────────── */
-    useEffect(() => {
-      const onFs = () => setIsFullscreen(document.fullscreenElement === wrapperRef.current);
-      document.addEventListener('fullscreenchange', onFs);
-      return () => document.removeEventListener('fullscreenchange', onFs);
-    }, []);
-
-    /* ── Actions ──────────────────────────────────────────── */
-    const playAction = useCallback(() => {
-      const p = playerRef.current;
-      if (!p) return;
-      try { p.playVideo(); } catch { /* noop */ }
-    }, []);
-
-    const pauseAction = useCallback(() => {
-      const p = playerRef.current;
-      if (!p) return;
-      try { p.pauseVideo(); } catch { /* noop */ }
-    }, []);
-
-    const togglePlay = useCallback(() => {
-      if (playing) pauseAction(); else playAction();
-      showControlsTemporarily();
-    }, [playing, playAction, pauseAction, showControlsTemporarily]);
-
-    const seekRel = useCallback(
-      (delta: number) => {
-        const p = playerRef.current;
-        if (!p) return;
-        const t = (p.getCurrentTime?.() ?? 0) + delta;
-        const d = p.getDuration?.() ?? duration;
-        const target = Math.max(0, Math.min(d || 0, t));
-        try { p.seekTo(target, true); } catch { /* noop */ }
-        setCurrentTime(target);
-        showControlsTemporarily();
-      },
-      [duration, showControlsTemporarily],
-    );
-
-    const seekTo = useCallback(
-      (target: number) => {
-        const p = playerRef.current;
-        if (!p) return;
-        try { p.seekTo(target, true); } catch { /* noop */ }
-        setCurrentTime(target);
-      },
-      [],
-    );
-
-    const setVolumeAction = useCallback((v: number) => {
-      const p = playerRef.current;
-      if (!p) return;
-      const clamped = Math.max(0, Math.min(100, v));
-      try {
-        p.setVolume(clamped);
-        if (clamped > 0 && p.isMuted?.()) p.unMute();
-      } catch { /* noop */ }
-      setVolume(clamped);
-      setMuted(clamped === 0);
-    }, []);
-
-    const toggleMute = useCallback(() => {
-      const p = playerRef.current;
-      if (!p) return;
-      const isMuted = p.isMuted?.() ?? muted;
-      try {
-        if (isMuted) { p.unMute(); setMuted(false); }
-        else         { p.mute();   setMuted(true); }
-      } catch { /* noop */ }
-    }, [muted]);
-
-    const toggleFullscreen = useCallback(() => {
-      if (!wrapperRef.current) return;
-      if (document.fullscreenElement) {
-        document.exitFullscreen?.();
-      } else {
-        wrapperRef.current.requestFullscreen?.();
-      }
-    }, []);
-
-    /* ── Ref impératif pour le parent ─────────────────────── */
-    useImperativeHandle(ref, () => ({
-      play: playAction,
-      pause: pauseAction,
-      toggle: togglePlay,
-      isPlaying: () => playing,
-    }), [playAction, pauseAction, togglePlay, playing]);
-
-    /* ── Raccourcis clavier ───────────────────────────────── */
-    useEffect(() => {
-      if (disableKeyboard) return;
-      const onKey = (e: KeyboardEvent) => {
-        // Évite d'intercepter les frappes dans les inputs.
-        const t = e.target as HTMLElement | null;
-        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-        switch (e.key) {
-          case ' ':
-          case 'k':
-            e.preventDefault(); togglePlay(); break;
-          case 'ArrowLeft': e.preventDefault(); seekRel(-5);  break;
-          case 'ArrowRight': e.preventDefault(); seekRel(5);  break;
-          case 'ArrowUp':   e.preventDefault(); setVolumeAction(volume + 5); break;
-          case 'ArrowDown': e.preventDefault(); setVolumeAction(volume - 5); break;
-          case 'm': case 'M': e.preventDefault(); toggleMute(); break;
-          case 'f': case 'F': e.preventDefault(); toggleFullscreen(); break;
-        }
-      };
-      window.addEventListener('keydown', onKey);
-      return () => window.removeEventListener('keydown', onKey);
-    }, [disableKeyboard, togglePlay, seekRel, setVolumeAction, toggleMute, toggleFullscreen, volume]);
-
-    /* ── Handlers UI ──────────────────────────────────────── */
-    const onProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const ratio = (e.clientX - rect.left) / rect.width;
-      const target = Math.max(0, Math.min(1, ratio)) * duration;
-      seekTo(target);
-    };
-
-    const onProgressDrag = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.buttons !== 1) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const ratio = (e.clientX - rect.left) / rect.width;
-      setScrubTime(Math.max(0, Math.min(1, ratio)) * duration);
-    };
-
-    const onProgressMouseUp = () => {
-      if (scrubTime !== null) {
-        seekTo(scrubTime);
-        setScrubTime(null);
-      }
-    };
-
-    const displayedTime = scrubTime ?? currentTime;
-    const progressRatio = duration > 0 ? Math.min(1, displayedTime / duration) : 0;
-
-    if (!id) {
-      return (
-        <div className={styles.player}>
-          <div className={styles.empty}>Vidéo indisponible.</div>
-        </div>
-      );
-    }
-
+    const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` : ''}`;
     return (
-      <div
-        ref={wrapperRef}
-        className={[
-          styles.player,
-          isFullscreen ? styles.playerFullscreen : '',
-          showControls ? '' : styles.playerHideCursor,
-        ].join(' ')}
-        onMouseMove={showControlsTemporarily}
-        onMouseLeave={() => {
-          if (playing) setShowControls(false);
-        }}
-      >
-        {/* Hôte de l'iframe — YT remplace ce div par l'iframe. */}
+      <div className={styles.player} data-player-status={status}>
         <div ref={containerRef} className={styles.iframeHost} />
-
-        {/* Cliquable layer pour play/pause sur tap sur la vidéo. */}
-        <button
-          type="button"
-          className={styles.tapLayer}
-          onClick={togglePlay}
-          aria-label={playing ? 'Pause' : 'Lire'}
-        />
-
-        {/* Big play button au centre quand on est en pause. */}
-        {!playing && (
-          <button
-            type="button"
-            className={styles.bigPlay}
-            onClick={togglePlay}
-            aria-label="Lire"
-          >
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </button>
+        {(status === 'limited' || status === 'error') && (
+          <div className={styles.notice} role="status">
+            <p>{status === 'error' ? error : 'Utilisez les commandes YouTube dans la vidéo. Si la lecture ne démarre pas, ouvrez-la sur YouTube.'}</p>
+            <div className={styles.actions}>
+              <button type="button" onClick={() => setAttempt((current) => current + 1)}>Réessayer</button>
+              <a href={watchUrl} target="_blank" rel="noopener noreferrer">Ouvrir sur YouTube</a>
+            </div>
+          </div>
         )}
-
-        {/* Overlay controls (auto-hide en lecture). */}
-        <div
-          className={[
-            styles.controls,
-            showControls ? styles.controlsVisible : '',
-          ].join(' ')}
-        >
-          {/* Progress bar — cliquable + drag. */}
-          <div
-            className={styles.progressTrack}
-            onMouseDown={onProgressClick}
-            onMouseMove={onProgressDrag}
-            onMouseUp={onProgressMouseUp}
-            onMouseLeave={onProgressMouseUp}
-          >
-            <div className={styles.progressBuffer} />
-            <div
-              className={styles.progressFill}
-              style={{ width: `${progressRatio * 100}%` }}
-            />
-            <div
-              className={styles.progressHandle}
-              style={{ left: `${progressRatio * 100}%` }}
-            />
-          </div>
-
-          <div className={styles.bar}>
-            <div className={styles.barLeft}>
-              <button
-                type="button"
-                className={styles.iconBtn}
-                onClick={togglePlay}
-                aria-label={playing ? 'Pause' : 'Lire'}
-              >
-                {playing ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="6" y="5" width="4" height="14" rx="1" />
-                    <rect x="14" y="5" width="4" height="14" rx="1" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
-              </button>
-
-              {/* Volume : icône + slider qui apparaît au hover. */}
-              <div className={styles.volumeGroup}>
-                <button
-                  type="button"
-                  className={styles.iconBtn}
-                  onClick={toggleMute}
-                  aria-label={muted ? 'Réactiver le son' : 'Couper le son'}
-                >
-                  {muted || volume === 0 ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <line x1="23" y1="9" x2="17" y2="15" />
-                      <line x1="17" y1="9" x2="23" y2="15" />
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-                    </svg>
-                  )}
-                </button>
-                <div className={styles.volumeSliderWrap}>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={muted ? 0 : volume}
-                    onChange={(e) => setVolumeAction(Number(e.target.value))}
-                    className={styles.volumeSlider}
-                    aria-label="Volume"
-                  />
-                </div>
-              </div>
-
-              <span className={styles.time}>
-                {formatTime(displayedTime)} <span className={styles.timeSep}>/</span> {formatTime(duration)}
-              </span>
-            </div>
-
-            <div className={styles.barRight}>
-              <button
-                type="button"
-                className={styles.iconBtn}
-                onClick={toggleFullscreen}
-                aria-label={isFullscreen ? 'Quitter le plein écran' : 'Plein écran'}
-              >
-                {isFullscreen ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="4 14 10 14 10 20" />
-                    <polyline points="20 10 14 10 14 4" />
-                    <line x1="14" y1="10" x2="21" y2="3" />
-                    <line x1="3" y1="21" x2="10" y2="14" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 3 21 3 21 9" />
-                    <polyline points="9 21 3 21 3 15" />
-                    <line x1="21" y1="3" x2="14" y2="10" />
-                    <line x1="3" y1="21" x2="10" y2="14" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     );
   },

@@ -14,18 +14,7 @@
       React Router ne lise window.location.
       Adapté de https://github.com/rafgraph/spa-github-pages (MIT).
     -->
-    <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function(s) {
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
-    </script>
+    <script src="%BASE_URL%restore-path.js"></script>
   </head>
   <body>
     <div id="root"></div>

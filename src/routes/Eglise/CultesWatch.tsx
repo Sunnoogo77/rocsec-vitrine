@@ -50,22 +50,27 @@ const TYPE_LIST: TypeCulte[] = [
 ];
 
 const PIP_WIDTH_DESKTOP  = 380;
-const PIP_HEIGHT_DESKTOP = Math.round(PIP_WIDTH_DESKTOP * 9 / 16);
+const PIP_TOOLBAR_HEIGHT = 44;
+const PIP_HEIGHT_DESKTOP = Math.max(200, Math.round(PIP_WIDTH_DESKTOP * 9 / 16)) + PIP_TOOLBAR_HEIGHT;
 const PIP_WIDTH_MOBILE   = 280;
-const PIP_HEIGHT_MOBILE  = Math.round(PIP_WIDTH_MOBILE * 9 / 16);
+const PIP_HEIGHT_MOBILE  = 200 + PIP_TOOLBAR_HEIGHT;
 const PIP_MARGIN = 16;
 const PIP_MOBILE_BREAKPOINT = 480;
 
 /* Taille effective du PiP selon la viewport courante. Sur mobile, on
    réduit pour que la mini-vidéo ne mange pas l'écran ni ne soit
    positionnée hors-écran par le calcul JS. */
-function getPipSize(): { width: number; height: number } {
+function getPipSize(withNotice = false): { width: number; height: number } {
   if (typeof window === 'undefined') {
     return { width: PIP_WIDTH_DESKTOP, height: PIP_HEIGHT_DESKTOP };
   }
-  return window.innerWidth <= PIP_MOBILE_BREAKPOINT
-    ? { width: PIP_WIDTH_MOBILE,  height: PIP_HEIGHT_MOBILE  }
-    : { width: PIP_WIDTH_DESKTOP, height: PIP_HEIGHT_DESKTOP };
+  const mobile = window.innerWidth <= PIP_MOBILE_BREAKPOINT;
+  const baseHeight = mobile ? PIP_HEIGHT_MOBILE : PIP_HEIGHT_DESKTOP;
+  return {
+    width: mobile ? PIP_WIDTH_MOBILE : PIP_WIDTH_DESKTOP,
+    height: Math.min(baseHeight + (withNotice ? 164 : 0),
+      Math.max(withNotice ? 282 : 244, window.innerHeight - 2 * PIP_MARGIN)),
+  };
 }
 
 type SortOrder = 'desc' | 'asc';
@@ -214,6 +219,7 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
   /* PiP draggable : position en pixels (fixed). null = position
      par défaut bottom-right calculée au render. */
   const [pipPos, setPipPos] = useState<{ top: number; left: number } | null>(null);
+  const [playerNotice, setPlayerNotice] = useState(false);
   const dragOffset = useRef<{ dx: number; dy: number } | null>(null);
 
   /* Détection scroll-out-of-view : observe le slot du player ; quand il
@@ -414,7 +420,7 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
   const onPipDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     /* Capture la position courante du PiP (pour cas par défaut, on le
        calcule depuis bottom/right). */
-    const { width, height } = getPipSize();
+    const { width, height } = getPipSize(playerNotice);
     let startTop: number;
     let startLeft: number;
     if (pipPos) {
@@ -430,14 +436,14 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
     };
     /* Pendant le drag : empêche la sélection de texte. */
     document.body.style.userSelect = 'none';
-  }, [pipPos]);
+  }, [pipPos, playerNotice]);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (!dragOffset.current) return;
       const top  = e.clientY - dragOffset.current.dy;
       const left = e.clientX - dragOffset.current.dx;
-      const { width, height } = getPipSize();
+      const { width, height } = getPipSize(playerNotice);
       const maxTop  = window.innerHeight - height;
       const maxLeft = window.innerWidth  - width;
       setPipPos({
@@ -456,7 +462,7 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     };
-  }, []);
+  }, [playerNotice]);
 
   /* Mode PiP global : déclenché par le mode filtré OU par le scroll
      du player hors viewport (l'utilisateur explore les infos en bas). */
@@ -466,13 +472,13 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
      ATTENTION : on doit explicitement annuler les top/left/inset hérités
      du CSS de base (.playerWrap a position:absolute; inset:0) sinon le
      wrapper s'ancre en haut-gauche au lieu d'utiliser bottom/right. */
-  const pipSize = isPip ? getPipSize() : null;
+  const pipSize = isPip ? getPipSize(playerNotice) : null;
   const pipStyle: React.CSSProperties = isPip && pipSize
     ? (pipPos
         ? {
             position: 'fixed',
-            top: pipPos.top,
-            left: pipPos.left,
+            top: Math.max(0, Math.min(pipPos.top, window.innerHeight - pipSize.height - PIP_MARGIN)),
+            left: Math.max(0, Math.min(pipPos.left, window.innerWidth - pipSize.width - PIP_MARGIN)),
             right: 'auto',
             bottom: 'auto',
             width: pipSize.width,
@@ -678,6 +684,7 @@ function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
                 videoKey={sermon.id}
                 autoplay
                 onEnded={onVideoEnded}
+                onNoticeChange={setPlayerNotice}
               />
 
               {/* Mini-bar visible en mode PiP (filtré OU scroll out). */}
